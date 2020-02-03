@@ -5,6 +5,9 @@ _This README contains basic information about the project and its artifacts. If 
 
 ## Team
 
+- Matthew Palermo
+- MEMBER2
+- Collin Strauch
 - MEMBER1
 - Tracy Fu
 - MEMBER3
