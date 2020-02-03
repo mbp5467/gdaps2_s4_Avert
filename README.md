@@ -8,7 +8,7 @@ _This README contains basic information about the project and its artifacts. If 
 - Matthew Palermo
 - Collin Strauch
 - Tracy Fu
-- MEMBER4
+- Tommy Murray Jr.
 
 ## Goals
 The primary goals of this project are the following:
