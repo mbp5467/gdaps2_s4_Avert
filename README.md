@@ -6,13 +6,9 @@ _This README contains basic information about the project and its artifacts. If 
 ## Team
 
 - Matthew Palermo
-- MEMBER2
 - Collin Strauch
-- MEMBER1
 - Tracy Fu
-- MEMBER3
 - MEMBER4
-- MEMBER5
 
 ## Goals
 The primary goals of this project are the following:
