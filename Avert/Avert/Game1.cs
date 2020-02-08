@@ -24,27 +24,32 @@ namespace Avert
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        //Making the various fields, each representing
+        //various elements used in the game.
+        SpriteFont gameFont;
+        Texture2D imageTexture;
+        Vector2 imageLocation;
+        Rectangle imageRectangle;
+
+        private SpriteFont mainFont;
+        private SpriteFont controlFont;
+
+        const float xBoundary = 500f;
+        const float yBoundary = 600f;
+        float xMovement;
+        float yMovement;
+
+        KeyboardState previousKeyboardState;
+        MouseState previousMouseState;
+        GameStates currentState;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
 
-            //Making the various fields, each representing
-            //various elements used in the game.
-            SpriteBatch spriteBatch;
-            Texture2D imageTexture;
-            Vector2 imageLocation;
-            Rectangle imageRectangle;
 
-            const float xBoundary = 500f;
-            const float yBoundary = 600f;
-            float xMovement;
-            float yMovement;
 
-            KeyboardState previousKeyboardState;
-            MouseState previousMouseState;
-            GameStates currentState;
-
-            SpriteFont gameFont;
+            
             Content.RootDirectory = "Content";
 
             //Changing the width and height of the screen to 500x600
@@ -64,7 +69,9 @@ namespace Avert
             // TODO: Add your initialization logic here
             previousKeyboardState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
-            currentState = GameStates.Menu();
+            currentState = GameStates.Menu;
+
+            this.IsMouseVisible = true;
 
             base.Initialize();
         }
@@ -151,6 +158,8 @@ namespace Avert
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            mainFont = Content.Load<SpriteFont>("MainMenuText");
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -174,6 +183,7 @@ namespace Avert
                 Exit();
 
             // TODO: Add your update logic here
+            ProcessInput();
 
             base.Update(gameTime);
         }
@@ -185,9 +195,41 @@ namespace Avert
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
+
+            // testing the game state working
+            switch (currentState)
+            {
+                case GameStates.Menu:
+                    GraphicsDevice.Clear(Color.Black);
+                    spriteBatch.DrawString(mainFont, "Welcome to Avert.\nPress C to go to control.\nPress L to go to Level", new Vector2(100f, 100f), Color.Red);
+                    break;
+
+                case GameStates.Control:
+                    GraphicsDevice.Clear(Color.Red);
+                    spriteBatch.DrawString(mainFont, "Here is Control Menu", new Vector2(100f, 100f), Color.Black);
+
+                    break;
+
+                case GameStates.Select:
+                    GraphicsDevice.Clear(Color.Blue);
+                    spriteBatch.DrawString(mainFont, "Here is Level Menu", new Vector2(100f, 100f), Color.Black);
+                    break;
+
+                case GameStates.Stage:
+                    GraphicsDevice.Clear(Color.Yellow);
+                    spriteBatch.DrawString(mainFont, "Here is Actual Level Menu", new Vector2(100f, 100f), Color.Black);
+                    break;
+
+                case GameStates.Failure:
+                    GraphicsDevice.Clear(Color.Green);
+                    spriteBatch.DrawString(mainFont, "Here is game over", new Vector2(100f, 100f), Color.Black);
+                    break;
+            }
+
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
