@@ -7,6 +7,18 @@ namespace Avert
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
+    //Making the enumerations for the game phases.
+    //These are the main menu, controls, level select,
+    //the actual level, and game over
+    enum GameStates
+    {
+        Menu,
+        Control,
+        Select,
+        Stage,
+        Hint,
+        Failure
+    }
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -15,7 +27,30 @@ namespace Avert
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            //Making the various fields, each representing
+            //various elements used in the game.
+            SpriteBatch spriteBatch;
+            Texture2D imageTexture;
+            Vector2 imageLocation;
+            Rectangle imageRectangle;
+
+            const float xBoundary = 500f;
+            const float yBoundary = 600f;
+            float xMovement;
+            float yMovement;
+
+            KeyboardState previousKeyboardState;
+            MouseState previousMouseState;
+            GameStates currentState;
+
+            SpriteFont gameFont;
             Content.RootDirectory = "Content";
+
+            //Changing the width and height of the screen to 500x600
+            graphics.PreferredBackBufferWidth = 500;
+            graphics.PreferredBackBufferHeight = 600;
+            graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -27,10 +62,86 @@ namespace Avert
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            previousKeyboardState = Keyboard.GetState();
+            previousMouseState = Mouse.GetState();
+            currentState = GameStates.Menu();
 
             base.Initialize();
         }
+        
+        private void ProcessInput()
+        {
+            //Making the keyboard and mouse states to be used
+            KeyboardState kbState = Keyboard.GetState();
+            MouseState mState = Mouse.GetState();
 
+            switch (currentState)
+            {
+                  case GameStates.Menu:
+                    if (kbState.IsKeyDown(Keys.C))
+                    {
+                     currentState = GameStates.Control;
+                    }
+                    if (kbState.IsKeyDown(Keys.L))
+                    {
+                     currentState = GameStates.Select;
+                    }
+                    break;
+
+                 case GameStates.Control:
+                   if (kbState.IsKeyDown(Keys.L))
+                   {
+                      currentState = GameStates.Select;
+                   }
+
+                   if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
+                   {
+                      currentState = GameStates.Stage;
+                   }
+                   break;
+
+                case GameStates.Select:
+                   if (kbState.IsKeyDown(Keys.C))
+                   {
+                      currentState = GameStates.Control;
+                   }
+                
+
+                   if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
+                   {
+                      currentState = GameStates.Stage;
+                   }
+                   break;
+               
+                case GameStates.Stage:
+                   if (kbState.IsKeyDown(Keys.R))
+                   {
+                      currentState = GameStates.Failure;
+                   }
+                   if (kbState.IsKeyDown(Keys.H))
+                   {
+                      currentState = GameStates.Hint;
+                   }
+                   break;
+
+                case GameStates.Failure:
+                   if (kbState.IsKeyDown(Keys.L))
+                   {
+                      currentState = GameStates.Select;
+                   }
+
+                   if (kbState.IsKeyDown(Keys.Escape))
+                   {
+                     currentState = GameStates.Menu;
+                   }
+                
+                   if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
+                   {
+                      currentState = GameStates.Stage;
+                   }
+                   break;
+            }
+        }
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -73,10 +184,11 @@ namespace Avert
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            spriteBatch.Begin();
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
