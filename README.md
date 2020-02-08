@@ -40,7 +40,7 @@ _As the project progresses, add notes here about how the repository is organized
 
 | File/Directory | Contents |
 | -------------- | ----------- |
-| [Google Documentation](TBD) | Link to the team's Google Doc with written project documentation | 
+| [Google Documentation](TBD) | Link to the team's Google Doc with written project documentation | https://docs.google.com/document/d/1nSW5v7hB6X4PuBVPtCtv6lNH2kY1LTXddgQnLUTfOec/edit?ts=5e3848da#heading=h.t0sfhbwed8te
 | [game/ReleaseNotes.md](src/ReleaseNotes.md) | MonoGame release notes _Update this with each milestone._| 
 | [external_tool/ReleaseNotes.md](src/ReleaseNotes.md) | External tool release notes _Update this with each milestone._| 
 
