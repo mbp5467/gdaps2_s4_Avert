@@ -21,14 +21,17 @@ The primary goals of this project are the following:
 ## Mission Statement
 _Replace this with the overall objectives that your team has agreed upon._
 _What is the goal of the project (from a learning and product perspective)? Who is your target audience? How will you define success?_
+The goal of the project from a learning and product perspective is for everyone on the team to have a firsthand team-based experience in game development. Since the industry in game development is very team-heavy, learning how to make a gamer in teams early is very helpful in learning how it works in the industry, as well as learning potential team skills that would be helpful going forward. The target audience of the game we are creating, titled Avert, is to anyone who enjoys puzzle games. We consider success to be a game that's playable and has several levels of puzzles with different solutions. If we can accomplish that, then the game has made its purpose and it would be a success.
 
 ## Communications
 
 ### Discord
 _Add info about how to join/use your team's Discord channel. What is it?_
+The entire team is keeping track of Discord in the general channel only. It's purpose is to coordinate meetings, as well as ask teammates for clarification if someone is working alone.
 
 ### Meeting Times
 _Set at least 1 out-of-class meeting time and note times when the entire group is usually free for additional meetings as needed._
+Saturdays at 2PM in GOL-2000 (The large open lab)
 
 ## Repository Overview
 _As the project progresses, add notes here about how the repository is organized, how branches are being used, etc._
