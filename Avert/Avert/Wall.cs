@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Avert
 {
-    class Wall:StableShape
+    /* This is child class of stable shape
+     * Wall will block the laser
+    */
+    class Wall :StableShape
     {
     }
 }

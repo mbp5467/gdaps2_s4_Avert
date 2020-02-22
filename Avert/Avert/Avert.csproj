@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game1.cs" />
+    <Compile Include="GameConfig.cs" />
     <Compile Include="Gate.cs" />
     <Compile Include="Laser.cs" />
     <Compile Include="Mirror.cs" />

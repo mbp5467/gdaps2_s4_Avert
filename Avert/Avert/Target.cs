@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Avert
 {
-    class Target:StableShape
+    /* This is child class of stable shape
+     * Target is the ending point of the game
+    */
+    class Target :StableShape
     {
     }
 }

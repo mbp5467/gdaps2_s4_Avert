@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Avert
 {
-    /*This class is pre-position shape for the level
+    /*This class is the parent class for pre-position shape
      */
     abstract class StableShape
     {
+
     }
 }
