@@ -28,11 +28,12 @@ namespace Avert
         //various elements used in the game.
         SpriteFont gameFont;
         Texture2D imageTexture;
-        Vector2 imageLocation;
-        Rectangle imageRectangle;
+        private Vector2 imageLocation;
+        private Rectangle imageRectangle;
 
         private SpriteFont mainFont;
         private SpriteFont controlFont;
+        private Texture2D sample;
 
         const float xBoundary = 500f;
         const float yBoundary = 600f;
@@ -70,7 +71,7 @@ namespace Avert
             previousKeyboardState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
             currentState = GameStates.Menu;
-
+            imageRectangle = new Rectangle(200, 250, 50, 50);
             this.IsMouseVisible = true;
 
             base.Initialize();
@@ -121,7 +122,36 @@ namespace Avert
                    break;
                
                 case GameStates.Stage:
-                   if (kbState.IsKeyDown(Keys.R))
+                    
+                    //Used to determine if the object is being dragged by the mouse.
+                    bool isDragAndDropping = false;
+
+                    //Determines if the mouse is currently hovering over the object and the button is being held down.
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                        && mState.Position.X > imageRectangle.X && mState.Position.X < (imageRectangle.X + imageRectangle.Width)
+                        && mState.Position.Y > imageRectangle.Y && mState.Position.Y < (imageRectangle.Y + imageRectangle.Height))
+                    {
+                        isDragAndDropping = true;
+                    }
+
+                    //Drags the object in accordance to the mouse's changing position.
+                    //I set up the dragging effect so the object moves in the direction of the mouse's current position from the mouse's previous position.
+                    if (isDragAndDropping)
+                    {
+                        int xDifference = mState.Position.X - previousMouseState.Position.X;
+                        int yDifference = mState.Position.Y - previousMouseState.Position.Y;
+                        imageRectangle.X += xDifference;
+                        imageRectangle.Y += yDifference;
+                    }
+
+                    //Turns off the dragging effect if the mouse button is released.
+                    if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released)
+                    {
+                        isDragAndDropping = false;
+                    }
+
+                    
+                    if (kbState.IsKeyDown(Keys.R))
                    {
                       currentState = GameStates.Failure;
                    }
@@ -147,8 +177,12 @@ namespace Avert
                       currentState = GameStates.Stage;
                    }
                    break;
+
             }
+            previousKeyboardState = kbState;
+            previousMouseState = mState;
         }
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -161,6 +195,7 @@ namespace Avert
             mainFont = Content.Load<SpriteFont>("ControlText");
 
             // TODO: use this.Content to load your game content here
+            sample = Content.Load<Texture2D>("Circle");
         }
 
         /// <summary>
@@ -218,7 +253,8 @@ namespace Avert
 
                 case GameStates.Stage:
                     GraphicsDevice.Clear(Color.Yellow);
-                    spriteBatch.DrawString(mainFont, "Here is Actual Level Menu", new Vector2(100f, 100f), Color.Black);
+                    spriteBatch.DrawString(mainFont, "Here is the Game itself", new Vector2(100f, 100f), Color.Black);
+                    spriteBatch.Draw(sample, imageRectangle, Color.Black);
                     break;
 
                 case GameStates.Failure:

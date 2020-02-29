@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Avert
 {
     /* This is child class of stable shape
-     * Gate required the laset must go through it to pass the level
+     * Gate required the laser must go through it to pass the level
     */
     class Gate :StableShape
     {
