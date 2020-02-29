@@ -44,6 +44,9 @@ namespace Avert
         MouseState previousMouseState;
         GameStates currentState;
 
+        //Used to determine if the object is being dragged by the mouse.
+        bool isDragAndDropping;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -72,6 +75,7 @@ namespace Avert
             previousMouseState = Mouse.GetState();
             currentState = GameStates.Menu;
             imageRectangle = new Rectangle(200, 250, 50, 50);
+            isDragAndDropping = false;
             this.IsMouseVisible = true;
 
             base.Initialize();
@@ -122,11 +126,7 @@ namespace Avert
                    break;
                
                 case GameStates.Stage:
-                    
-                    //Used to determine if the object is being dragged by the mouse.
-                    bool isDragAndDropping = false;
-
-                    //Determines if the mouse is currently hovering over the object and the button is being held down.
+                    //Determines if the mouse button is being held down and if the mouse is hovering over the object.
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                         && mState.Position.X > imageRectangle.X && mState.Position.X < (imageRectangle.X + imageRectangle.Width)
                         && mState.Position.Y > imageRectangle.Y && mState.Position.Y < (imageRectangle.Y + imageRectangle.Height))
@@ -149,7 +149,6 @@ namespace Avert
                     {
                         isDragAndDropping = false;
                     }
-
                     
                     if (kbState.IsKeyDown(Keys.R))
                    {
