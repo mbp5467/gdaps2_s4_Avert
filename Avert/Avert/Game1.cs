@@ -34,6 +34,8 @@ namespace Avert
         private SpriteFont mainFont;
         private SpriteFont controlFont;
         private Texture2D sample;
+        private Texture2D gridTexture;
+        
 
         const float xBoundary = 500f;
         const float yBoundary = 600f;
@@ -46,6 +48,16 @@ namespace Avert
 
         //Used to determine if the object is being dragged by the mouse.
         bool isDragAndDropping;
+
+        //life
+        int life = 5;
+
+        //timer system attributes
+        // base on second, the value could be changed
+        double timer = 5.00;
+
+         
+        GameConfig setup = new GameConfig();
 
         public Game1()
         {
@@ -150,14 +162,22 @@ namespace Avert
                         isDragAndDropping = false;
                     }
                     
+                    //restart the game
                     if (kbState.IsKeyDown(Keys.R))
                    {
-                      currentState = GameStates.Failure;
+                      currentState = GameStates.Stage;
                    }
-                   if (kbState.IsKeyDown(Keys.H))
+
+                    if (life == 0 || timer <= 0) 
+                    {
+                        currentState = GameStates.Failure;
+                    }
+
+                    // hit system
+                   /*if (kbState.IsKeyDown(Keys.H))
                    {
                       currentState = GameStates.Hint;
-                   }
+                   }*/
                    break;
 
                 case GameStates.Failure:
@@ -195,6 +215,8 @@ namespace Avert
 
             // TODO: use this.Content to load your game content here
             sample = Content.Load<Texture2D>("Circle");
+            gridTexture = Content.Load<Texture2D>("gridTexture");
+
         }
 
         /// <summary>
@@ -213,8 +235,11 @@ namespace Avert
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            
+
             // TODO: Add your update logic here
+            // timer system
+            timer -= gameTime.ElapsedGameTime.TotalSeconds;
+
             ProcessInput();
 
             base.Update(gameTime);
@@ -251,8 +276,12 @@ namespace Avert
                     break;
 
                 case GameStates.Stage:
+                    //draw the grid
+                    setup.Draw(spriteBatch, gridTexture);
+
                     GraphicsDevice.Clear(Color.Yellow);
                     spriteBatch.DrawString(mainFont, "Here is the Game itself", new Vector2(100f, 100f), Color.Black);
+                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(400f, 500f), Color.Black);
                     spriteBatch.Draw(sample, imageRectangle, Color.Black);
                     break;
 
