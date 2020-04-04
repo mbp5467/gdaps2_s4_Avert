@@ -1,24 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.IO;
 
 namespace Avert
 {
     class GameConfig
     {
-
+        int level = 1;
         //Set the grid size
         // the number can be changed depends on the level(future)
-        int gridSize_W = 10;
-        int gridSize_H = 10;
+        int gridSize_W;
+        int gridSize_H;
+        int tileSize;
+        int windowWidth = 500;
+        int windowHeight = 600;
 
-        //set the size for each tile
-        int tileSize = 45;
+        public void LoadLevel()
+        {
+            string filename = "Levels.txt";
+            FileInfo levels = new FileInfo(filename);
+            if (levels.Exists)
+            {
+                StreamReader levelReader = new StreamReader(filename);
+                string line = null;
+                while ((line = levelReader.ReadLine()) != null)
+                {
+                    string[] data = line.Split(',');
+                    if (data[0] == level.ToString())
+                    {
+                        gridSize_W = int.Parse(data[1]);
+                        gridSize_H = int.Parse(data[2]);
+                        //set the size for each tile
+                        tileSize = windowWidth / gridSize_W;
+                        break;
+                    }
+                }
+                levelReader.Close();
+            }
+        }
 
         Rectangle gridPosition;
 

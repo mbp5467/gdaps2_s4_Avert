@@ -50,6 +50,8 @@ namespace Avert
         GameStates currentState; //Fields for keyboard and mouse states for input
                                  //as well as a GameStates enum
 
+        bool loadLevel;
+
         //Used to determine if the object is being dragged by the mouse.
         bool isDragAndDropping;
 
@@ -93,8 +95,8 @@ namespace Avert
             levelRectangle = new Rectangle(340, 330, 130, 50);
             gameRectangle = new Rectangle(180, 330, 130, 50);
             isDragAndDropping = false;
-            IsMouseVisible = true; //Initializing the fields for the states, rectangles, and booleans for input
-
+            this.IsMouseVisible = true;
+            loadLevel = false;
             base.Initialize();
         }
         
@@ -271,8 +273,20 @@ namespace Avert
 
             // TODO: Add your update logic here
             // timer system
-            timer -= gameTime.ElapsedGameTime.TotalSeconds;
-
+            if (currentState == GameStates.Stage)
+            {
+                timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                if (loadLevel == false)
+                {
+                    setup.LoadLevel();
+                    loadLevel = true;
+                }
+            }
+            else if (currentState != GameStates.Stage)
+            {
+                timer = 10.00;
+                loadLevel = false;
+            }
             ProcessInput();
 
             base.Update(gameTime);
