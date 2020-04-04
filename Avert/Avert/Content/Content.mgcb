@@ -32,13 +32,6 @@
 /processorParam:TextureFormat=Compressed
 /build:ControlText.spritefont
 
-#begin MainMenuText.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:MainMenuText.spritefont
-
 #begin gridTexture.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -50,4 +43,11 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:gridTexture.jpg
+
+#begin MainMenuText.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MainMenuText.spritefont
 

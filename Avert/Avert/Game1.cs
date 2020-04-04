@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Avert
 {
@@ -42,6 +43,8 @@ namespace Avert
         float xMovement;
         float yMovement;
 
+        private bool levelLoadIndicator;
+
         KeyboardState previousKeyboardState;
         MouseState previousMouseState;
         GameStates currentState;
@@ -54,7 +57,7 @@ namespace Avert
 
         //timer system attributes
         // base on second, the value could be changed
-        double timer = 5.00;
+        double timer = 10.00;
 
          
         GameConfig setup = new GameConfig();
@@ -62,10 +65,6 @@ namespace Avert
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-
-
-
-            
             Content.RootDirectory = "Content";
 
             //Changing the width and height of the screen to 500x600
@@ -89,7 +88,7 @@ namespace Avert
             imageRectangle = new Rectangle(200, 250, 50, 50);
             isDragAndDropping = false;
             this.IsMouseVisible = true;
-
+            levelLoadIndicator = false;
             base.Initialize();
         }
         
@@ -238,8 +237,20 @@ namespace Avert
 
             // TODO: Add your update logic here
             // timer system
-            timer -= gameTime.ElapsedGameTime.TotalSeconds;
-
+            if (currentState == GameStates.Stage)
+            {
+                timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                if (levelLoadIndicator == false)
+                {
+                    setup.LoadLevel();
+                    levelLoadIndicator = true;
+                }
+            }
+            if (currentState != GameStates.Stage)
+            {
+                levelLoadIndicator = false;
+                timer = 10.00;
+            }
             ProcessInput();
 
             base.Update(gameTime);
@@ -279,10 +290,9 @@ namespace Avert
                     //draw the grid
                     setup.Draw(spriteBatch, gridTexture);
 
-                    GraphicsDevice.Clear(Color.Yellow);
-                    spriteBatch.DrawString(mainFont, "Here is the Game itself", new Vector2(100f, 100f), Color.Black);
-                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(400f, 500f), Color.Black);
-                    spriteBatch.Draw(sample, imageRectangle, Color.Black);
+                    GraphicsDevice.Clear(Color.Blue);
+                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
+                    spriteBatch.Draw(sample, imageRectangle, Color.White);
                     break;
 
                 case GameStates.Failure:
