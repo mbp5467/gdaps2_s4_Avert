@@ -16,7 +16,6 @@ namespace Avert
         Control,
         Select,
         Stage,
-        //Hint,
         Failure
     }
     public class Game1 : Game
@@ -32,35 +31,36 @@ namespace Avert
         private Rectangle imageRectangle;
         private Rectangle controlRectangle;
         private Rectangle levelRectangle;
-        private Rectangle gameRectangle;
+        private Rectangle gameRectangle; //Fields for the fonts, textures, and Vectors/Rectangles
 
 
         private SpriteFont mainFont;
         private SpriteFont controlFont;
         private Texture2D sample;
         private Texture2D gridTexture;
-        private Texture2D redBox;
+        private Texture2D redBox; //Fields for fonts and images
 
         const float xBoundary = 600f;
         const float yBoundary = 600f;
         float xMovement;
-        float yMovement;
+        float yMovement; //Fields for the X/Y boundaries and movememnts
 
         KeyboardState previousKeyboardState;
         MouseState previousMouseState;
-        GameStates currentState;
+        GameStates currentState; //Fields for keyboard and mouse states for input
+                                 //as well as a GameStates enum
 
         //Used to determine if the object is being dragged by the mouse.
         bool isDragAndDropping;
 
-        //life
+        //Life and total life fields
         int life = 5;
-        const int TOTAL_LIFE = 5;
+        const int Total_Life = 5;
 
-        //timer system attributes
-        // base on second, the value could be changed
+        //timer is set to the constant
+        //time and is subtracted from during the levels
         double timer = 10.00;
-        const double TIME = 10.00;
+        const double Time = 10.00;
 
          
         GameConfig setup = new GameConfig();
@@ -93,7 +93,7 @@ namespace Avert
             levelRectangle = new Rectangle(340, 330, 130, 50);
             gameRectangle = new Rectangle(180, 330, 130, 50);
             isDragAndDropping = false;
-            this.IsMouseVisible = true;
+            IsMouseVisible = true; //Initializing the fields for the states, rectangles, and booleans for input
 
             base.Initialize();
         }
@@ -103,6 +103,10 @@ namespace Avert
             //Making the keyboard and mouse states to be used
             KeyboardState kbState = Keyboard.GetState();
             MouseState mState = Mouse.GetState();
+
+            //Switch statement for processing input, allowing the transitions between states.
+            //Menu, Controls, Select and Failure allow keyboard inputs that can make the states switch
+            //between each other. The stage statement is where the controls of the game take place.
 
             switch (currentState)
             {
@@ -137,7 +141,7 @@ namespace Avert
                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
                        || kbState.IsKeyDown(Keys.L))
                     {
-                        life = TOTAL_LIFE;
+                        life = Total_Life;
                         currentState = GameStates.Select;
                     }
                     break;
@@ -155,7 +159,7 @@ namespace Avert
                           && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
                           ||(kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
                     {
-                        life = TOTAL_LIFE;
+                        life = Total_Life;
                         currentState = GameStates.Stage;
                     }
                     break;
@@ -170,7 +174,7 @@ namespace Avert
                     }
 
                     //Drags the object in accordance to the mouse's changing position.
-                    //I set up the dragging effect so the object moves in the direction of the mouse's current position from the mouse's previous position.
+                    //The dragging effect is set up so the object moves in the direction of the mouse's current position from the mouse's previous position.
                     if (isDragAndDropping)
                     {
                         int xDifference = mState.Position.X - previousMouseState.Position.X;
@@ -185,23 +189,18 @@ namespace Avert
                         isDragAndDropping = false;
                     }
                     
-                    //restart the game
+                    //Restart the game
                     if (kbState.IsKeyDown(Keys.R))
                    {
                         life--;
                       currentState = GameStates.Failure;
                    }
-
+                    //Game over if your life is out or there's no time left
                     if (life == 0 || timer <= 0) 
                     {
                         currentState = GameStates.Failure;
                     }
 
-                    // hit system
-                   /*if (kbState.IsKeyDown(Keys.H))
-                   {
-                      currentState = GameStates.Hint;
-                   }*/
                    break;
 
                 case GameStates.Failure:
@@ -224,7 +223,7 @@ namespace Avert
                                && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
                                || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                         {
-                            timer = TIME;
+                            timer = Time; //Resets the timer
                             currentState = GameStates.Stage;
                         }
                     }
@@ -249,7 +248,7 @@ namespace Avert
             // TODO: use this.Content to load your game content here
             sample = Content.Load<Texture2D>("Circle");
             gridTexture = Content.Load<Texture2D>("gridTexture");
-            redBox = Content.Load<Texture2D>("redBox");
+            redBox = Content.Load<Texture2D>("redBox"); //Soon to be replaced with drawings
 
         }
 
@@ -290,7 +289,9 @@ namespace Avert
 
             // TODO: Add your drawing code here
 
-            // testing the game state working
+            // Testing the game states before they are replaced
+            //with drawings of the game's artstyle, using switch statements
+            //to draw the content in each screen.
             switch (currentState)
             {
                 case GameStates.Menu:
@@ -305,9 +306,9 @@ namespace Avert
                 case GameStates.Control:
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.DrawString(mainFont, "Control", new Vector2(200f, 100f), Color.Red);
-                    spriteBatch.DrawString(mainFont,"Click and drag the objects,\n" +
-                        "shoot the laser by space\n" +
-                        "hit the target!",new Vector2(50f,200f),Color.Red);
+                    spriteBatch.DrawString(mainFont,"Click and drag the objects with the mouse,\n" +
+                        " shoot the laser with the space bar, and \n" +
+                        "hit the target to clear the level!",new Vector2(50f,200f),Color.Red);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
                     spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
                     spriteBatch.Draw(redBox, gameRectangle, Color.White);
@@ -325,10 +326,9 @@ namespace Avert
                     break;
 
                 case GameStates.Stage:
-                    //draw the grid
+                    //Drawing the grid
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Yellow);
-                    //spriteBatch.DrawString(mainFont, "Here is the Game itself", new Vector2(400f, 100f), Color.Black);
                     spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(300f, 500f), Color.Black);
                     spriteBatch.Draw(sample, imageRectangle, Color.Black);
                     break;
@@ -336,8 +336,7 @@ namespace Avert
                 case GameStates.Failure:
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.DrawString(mainFont, "FAILED!", new Vector2(100f, 100f), Color.Red);
-                    spriteBatch.DrawString(mainFont, "Socre: ", new Vector2(100f, 200f), Color.Red);
-
+                    spriteBatch.DrawString(mainFont, "Score: ", new Vector2(100f, 200f), Color.Red);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
                     spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
                     if (life > 0) 
@@ -345,11 +344,8 @@ namespace Avert
                         spriteBatch.Draw(redBox, gameRectangle, Color.White);
                         spriteBatch.DrawString(mainFont, "Restart", new Vector2(190f, 350f), Color.Red);
                     }
-
                     break;
             }
-
-
             spriteBatch.End();
             base.Draw(gameTime);
         }
