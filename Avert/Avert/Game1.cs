@@ -50,6 +50,8 @@ namespace Avert
         MouseState previousMouseState;
         GameStates currentState;
 
+        bool loadLevel;
+
         //Used to determine if the object is being dragged by the mouse.
         bool isDragAndDropping;
 
@@ -94,7 +96,7 @@ namespace Avert
             gameRectangle = new Rectangle(180, 330, 130, 50);
             isDragAndDropping = false;
             this.IsMouseVisible = true;
-
+            loadLevel = false;
             base.Initialize();
         }
         
@@ -272,8 +274,20 @@ namespace Avert
 
             // TODO: Add your update logic here
             // timer system
-            timer -= gameTime.ElapsedGameTime.TotalSeconds;
-
+            if (currentState == GameStates.Stage)
+            {
+                timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                if (loadLevel == false)
+                {
+                    setup.LoadLevel();
+                    loadLevel = true;
+                }
+            }
+            else if (currentState != GameStates.Stage)
+            {
+                timer = 10.00;
+                loadLevel = false;
+            }
             ProcessInput();
 
             base.Update(gameTime);
@@ -329,8 +343,8 @@ namespace Avert
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Yellow);
                     //spriteBatch.DrawString(mainFont, "Here is the Game itself", new Vector2(400f, 100f), Color.Black);
-                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(300f, 500f), Color.Black);
-                    spriteBatch.Draw(sample, imageRectangle, Color.Black);
+                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
+                    spriteBatch.Draw(sample, imageRectangle, Color.White);
                     break;
 
                 case GameStates.Failure:
