@@ -32,6 +32,13 @@
 /processorParam:TextureFormat=Compressed
 /build:ControlText.spritefont
 
+#begin MainMenuText.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MainMenuText.spritefont
+
 #begin gridTexture.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -44,10 +51,15 @@
 /processorParam:TextureFormat=Color
 /build:gridTexture.jpg
 
-#begin MainMenuText.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
+#begin redBox.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:MainMenuText.spritefont
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:redBox.jpg
 

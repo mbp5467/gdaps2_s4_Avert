@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 
 namespace Avert
 {
@@ -17,7 +16,7 @@ namespace Avert
         Control,
         Select,
         Stage,
-        Hint,
+        //Hint,
         Failure
     }
     public class Game1 : Game
@@ -31,19 +30,21 @@ namespace Avert
         Texture2D imageTexture;
         private Vector2 imageLocation;
         private Rectangle imageRectangle;
+        private Rectangle controlRectangle;
+        private Rectangle levelRectangle;
+        private Rectangle gameRectangle;
+
 
         private SpriteFont mainFont;
         private SpriteFont controlFont;
         private Texture2D sample;
         private Texture2D gridTexture;
-        
+        private Texture2D redBox;
 
-        const float xBoundary = 500f;
+        const float xBoundary = 600f;
         const float yBoundary = 600f;
         float xMovement;
         float yMovement;
-
-        private bool levelLoadIndicator;
 
         KeyboardState previousKeyboardState;
         MouseState previousMouseState;
@@ -54,10 +55,12 @@ namespace Avert
 
         //life
         int life = 5;
+        const int TOTAL_LIFE = 5;
 
         //timer system attributes
         // base on second, the value could be changed
         double timer = 10.00;
+        const double TIME = 10.00;
 
          
         GameConfig setup = new GameConfig();
@@ -86,9 +89,12 @@ namespace Avert
             previousMouseState = Mouse.GetState();
             currentState = GameStates.Menu;
             imageRectangle = new Rectangle(200, 250, 50, 50);
+            controlRectangle = new Rectangle(40, 330, 130, 50);
+            levelRectangle = new Rectangle(340, 330, 130, 50);
+            gameRectangle = new Rectangle(180, 330, 130, 50);
             isDragAndDropping = false;
             this.IsMouseVisible = true;
-            levelLoadIndicator = false;
+
             base.Initialize();
         }
         
@@ -101,40 +107,58 @@ namespace Avert
             switch (currentState)
             {
                   case GameStates.Menu:
-                    if (kbState.IsKeyDown(Keys.C))
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                        && mState.Position.X > controlRectangle.X && mState.Position.X < (controlRectangle.X + controlRectangle.Width)
+                        && mState.Position.Y > controlRectangle.Y && mState.Position.Y < (controlRectangle.Y + controlRectangle.Height)
+                        ||kbState.IsKeyDown(Keys.C))
                     {
-                     currentState = GameStates.Control;
+                        currentState = GameStates.Control;
                     }
-                    if (kbState.IsKeyDown(Keys.L))
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                       && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
+                       && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
+                       || kbState.IsKeyDown(Keys.L))
                     {
-                     currentState = GameStates.Select;
+                        currentState = GameStates.Select;
                     }
                     break;
 
                  case GameStates.Control:
-                   if (kbState.IsKeyDown(Keys.L))
-                   {
-                      currentState = GameStates.Select;
-                   }
 
-                   if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
-                   {
-                      currentState = GameStates.Stage;
-                   }
-                   break;
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                         && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
+                         && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
+                         ||(kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
+                    {
+                        currentState = GameStates.Stage;
+                    }
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                       && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
+                       && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
+                       || kbState.IsKeyDown(Keys.L))
+                    {
+                        life = TOTAL_LIFE;
+                        currentState = GameStates.Select;
+                    }
+                    break;
 
                 case GameStates.Select:
-                   if (kbState.IsKeyDown(Keys.C))
-                   {
-                      currentState = GameStates.Control;
-                   }
-                
-
-                   if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
-                   {
-                      currentState = GameStates.Stage;
-                   }
-                   break;
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                        && mState.Position.X > controlRectangle.X && mState.Position.X < (controlRectangle.X + controlRectangle.Width)
+                        && mState.Position.Y > controlRectangle.Y && mState.Position.Y < (controlRectangle.Y + controlRectangle.Height)
+                        || kbState.IsKeyDown(Keys.C))
+                    {
+                        currentState = GameStates.Control;
+                    }
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
+                          && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
+                          ||(kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
+                    {
+                        life = TOTAL_LIFE;
+                        currentState = GameStates.Stage;
+                    }
+                    break;
                
                 case GameStates.Stage:
                     //Determines if the mouse button is being held down and if the mouse is hovering over the object.
@@ -164,7 +188,8 @@ namespace Avert
                     //restart the game
                     if (kbState.IsKeyDown(Keys.R))
                    {
-                      currentState = GameStates.Stage;
+                        life--;
+                      currentState = GameStates.Failure;
                    }
 
                     if (life == 0 || timer <= 0) 
@@ -180,7 +205,10 @@ namespace Avert
                    break;
 
                 case GameStates.Failure:
-                   if (kbState.IsKeyDown(Keys.L))
+                   if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                       && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
+                       && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
+                        || kbState.IsKeyDown(Keys.L))
                    {
                       currentState = GameStates.Select;
                    }
@@ -189,11 +217,17 @@ namespace Avert
                    {
                      currentState = GameStates.Menu;
                    }
-                
-                   if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
-                   {
-                      currentState = GameStates.Stage;
-                   }
+                    if (life > 0)
+                    {
+                        if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                               && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
+                               && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
+                               || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
+                        {
+                            timer = TIME;
+                            currentState = GameStates.Stage;
+                        }
+                    }
                    break;
 
             }
@@ -215,6 +249,7 @@ namespace Avert
             // TODO: use this.Content to load your game content here
             sample = Content.Load<Texture2D>("Circle");
             gridTexture = Content.Load<Texture2D>("gridTexture");
+            redBox = Content.Load<Texture2D>("redBox");
 
         }
 
@@ -237,20 +272,8 @@ namespace Avert
 
             // TODO: Add your update logic here
             // timer system
-            if (currentState == GameStates.Stage)
-            {
-                timer -= gameTime.ElapsedGameTime.TotalSeconds;
-                if (levelLoadIndicator == false)
-                {
-                    setup.LoadLevel();
-                    levelLoadIndicator = true;
-                }
-            }
-            if (currentState != GameStates.Stage)
-            {
-                levelLoadIndicator = false;
-                timer = 10.00;
-            }
+            timer -= gameTime.ElapsedGameTime.TotalSeconds;
+
             ProcessInput();
 
             base.Update(gameTime);
@@ -272,32 +295,57 @@ namespace Avert
             {
                 case GameStates.Menu:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Welcome to Avert.\nPress C to go to control.\nPress L to go to Level", new Vector2(100f, 100f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Welcome to Avert.\n", new Vector2(100f, 100f), Color.Red);
+                    spriteBatch.Draw(redBox, controlRectangle, Color.White);
+                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    spriteBatch.DrawString(mainFont, "Control", new Vector2(50f,350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f,350f),Color.Red);
                     break;
 
                 case GameStates.Control:
-                    GraphicsDevice.Clear(Color.Red);
-                    spriteBatch.DrawString(mainFont, "Here is Control Menu", new Vector2(100f, 100f), Color.Black);
+                    GraphicsDevice.Clear(Color.Black);
+                    spriteBatch.DrawString(mainFont, "Control", new Vector2(200f, 100f), Color.Red);
+                    spriteBatch.DrawString(mainFont,"Click and drag the objects,\n" +
+                        "shoot the laser by space\n" +
+                        "hit the target!",new Vector2(50f,200f),Color.Red);
+                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f,350f), Color.Red);
 
                     break;
 
                 case GameStates.Select:
-                    GraphicsDevice.Clear(Color.Blue);
-                    spriteBatch.DrawString(mainFont, "Here is Level Menu", new Vector2(100f, 100f), Color.Black);
+                    GraphicsDevice.Clear(Color.Black);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(200f, 100f), Color.Red);
+                    spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f, 350f), Color.Red);
+                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
                     break;
 
                 case GameStates.Stage:
                     //draw the grid
                     setup.Draw(spriteBatch, gridTexture);
-
-                    GraphicsDevice.Clear(Color.Blue);
-                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
-                    spriteBatch.Draw(sample, imageRectangle, Color.White);
+                    GraphicsDevice.Clear(Color.Yellow);
+                    //spriteBatch.DrawString(mainFont, "Here is the Game itself", new Vector2(400f, 100f), Color.Black);
+                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(300f, 500f), Color.Black);
+                    spriteBatch.Draw(sample, imageRectangle, Color.Black);
                     break;
 
                 case GameStates.Failure:
-                    GraphicsDevice.Clear(Color.Green);
-                    spriteBatch.DrawString(mainFont, "Here is game over", new Vector2(100f, 100f), Color.Black);
+                    GraphicsDevice.Clear(Color.Black);
+                    spriteBatch.DrawString(mainFont, "FAILED!", new Vector2(100f, 100f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Socre: ", new Vector2(100f, 200f), Color.Red);
+
+                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
+                    if (life > 0) 
+                    {
+                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                        spriteBatch.DrawString(mainFont, "Restart", new Vector2(190f, 350f), Color.Red);
+                    }
+
                     break;
             }
 
