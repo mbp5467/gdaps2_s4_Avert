@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Avert
 {
@@ -61,8 +62,8 @@ namespace Avert
 
         //timer is set to the constant
         //time and is subtracted from during the levels
-        double timer = 10.00;
-        const double Time = 10.00;
+        double timer = 10.000;
+        const double Time = 10.000;
 
          
         GameConfig setup = new GameConfig();
@@ -284,7 +285,7 @@ namespace Avert
             }
             else if (currentState != GameStates.Stage)
             {
-                timer = 10.00;
+                timer = 10.000;
                 loadLevel = false;
             }
             ProcessInput();
@@ -343,8 +344,8 @@ namespace Avert
                     //Drawing the grid
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Yellow);
-                    spriteBatch.DrawString(mainFont, timer.ToString() + "\n" + "life: "+life.ToString(), new Vector2(300f, 500f), Color.Black);
-                    spriteBatch.Draw(sample, imageRectangle, Color.Black);
+                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
+                    spriteBatch.Draw(sample, imageRectangle, Color.White);
                     break;
 
                 case GameStates.Failure:
