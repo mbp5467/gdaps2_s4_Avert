@@ -31,10 +31,11 @@ The entire team is keeping track of Discord in the general channel only. It's pu
 
 ### Meeting Times
 _Set at least 1 out-of-class meeting time and note times when the entire group is usually free for additional meetings as needed._
-Saturdays at 2PM in GOL-2000 (The large open lab)
+Wednesdays at 12PM over a Discord voice call.
 
 ## Repository Overview
 _As the project progresses, add notes here about how the repository is organized, how branches are being used, etc._
+The repository and branches are mainly being used to keep track of which tasks have been accomplished before they were pushed. If the team needs to check back to previous code in order to help them understand a topic that was used during the development, we would look back at previous repository pushes and respective branches in order to compare the output with what we are trying to accomplish.
 
 **Instructions about the required documentation/activities for each milestone can be found in [instructions/](instructions/Milestone Instructions.md).**
 
