@@ -37,7 +37,7 @@ namespace Avert
 
         private SpriteFont mainFont;
         private SpriteFont controlFont;
-        private Texture2D sample;
+        private Texture2D mirrorTexture;
         private Texture2D gridTexture;
         private Texture2D redBox; //Fields for fonts and images
 
@@ -65,6 +65,8 @@ namespace Avert
         double timer = 10.000;
         const double Time = 10.000;
 
+        private Mirror mirror;
+        private MoveableShape moveableShape;
          
         GameConfig setup = new GameConfig();
 
@@ -98,6 +100,7 @@ namespace Avert
             isDragAndDropping = false;
             this.IsMouseVisible = true;
             loadLevel = false;
+            mirror = new Mirror(mirrorTexture, imageRectangle);
             base.Initialize();
         }
         
@@ -168,39 +171,6 @@ namespace Avert
                     break;
                
                 case GameStates.Stage:
-                    //Determines if the mouse button is being held down and if the mouse is hovering over the object.
-                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
-                        && mState.Position.X > imageRectangle.X && mState.Position.X < (imageRectangle.X + imageRectangle.Width)
-                        && mState.Position.Y > imageRectangle.Y && mState.Position.Y < (imageRectangle.Y + imageRectangle.Height))
-                    {
-                        isDragAndDropping = true;
-                    }
-
-                    //Drags the object in accordance to the mouse's changing position.
-                    //The dragging effect is set up so the object moves in the direction of the mouse's current position from the mouse's previous position.
-                    if (isDragAndDropping)
-                    {
-                        int xDifference = mState.Position.X - previousMouseState.Position.X;
-                        int yDifference = mState.Position.Y - previousMouseState.Position.Y;
-                        imageRectangle.X += xDifference;
-                        imageRectangle.Y += yDifference;
-                    }
-
-                    //Turns off the dragging effect if the mouse button is released and snaps moving shapes onto the spots.
-                    if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released 
-                        && isDragAndDropping == true)
-                    {
-                        foreach (Rectangle gridSpot in setup.GridTiles())
-                        {
-                            if (mState.X >= gridSpot.X && mState.X < gridSpot.X + gridSpot.Width
-                                && mState.Y >= gridSpot.Y && mState.Y < gridSpot.Y + gridSpot.Height)
-                            {
-                                imageRectangle.X = gridSpot.X + 5;
-                                imageRectangle.Y = gridSpot.Y + 5;
-                            }
-                        }
-                        isDragAndDropping = false;
-                    }
                     
                     //Restart the game
                     if (kbState.IsKeyDown(Keys.R))
@@ -259,7 +229,7 @@ namespace Avert
             mainFont = Content.Load<SpriteFont>("ControlText");
 
             // TODO: use this.Content to load your game content here
-            sample = Content.Load<Texture2D>("Circle");
+            mirrorTexture = Content.Load<Texture2D>("Circle");
             gridTexture = Content.Load<Texture2D>("gridTexture");
             redBox = Content.Load<Texture2D>("redBox"); //Soon to be replaced with drawings
 
@@ -290,6 +260,7 @@ namespace Avert
                 if (loadLevel == false)
                 {
                     setup.LoadLevel();
+                    mirror.LoadLevel();
                     loadLevel = true;
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
@@ -301,6 +272,7 @@ namespace Avert
                 loadLevel = false;
             }
             ProcessInput();
+            mirror.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -357,7 +329,11 @@ namespace Avert
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Yellow);
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
-                    spriteBatch.Draw(sample, imageRectangle, Color.White);
+                    if (mirror.Active == true)
+                    {
+                        spriteBatch.Draw(mirrorTexture, imageRectangle, Color.White);
+                    }
+                    
                     break;
 
                 case GameStates.Failure:

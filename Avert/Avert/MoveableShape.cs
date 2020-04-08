@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Avert
 {
@@ -17,7 +18,11 @@ namespace Avert
         protected Texture2D texture;
         protected Rectangle position;
         protected bool active = false;
-        
+
+        private MouseState previousMouseState;
+        private bool isDragAndDropping;
+        private GameConfig grid;
+
         // Store the position in rectagle for collision later
         // the postion could be changed due to the movement
         public Rectangle Position 
@@ -39,9 +44,11 @@ namespace Avert
         {
             this.texture = t;
             this.position = r;
+            isDragAndDropping = false;
+            grid = new GameConfig();
         }
 
-        //Load the number of moveable shape
+        //Loads each movable shape
         public abstract void LoadLevel();
 
 
@@ -51,8 +58,43 @@ namespace Avert
             spriteBatch.Draw(texture, position, Color.White);
         }
 
-        // moveable shape will have a update location when moving
-        public abstract void Update(GameTime gameTime);
+        public void ProcessInput()
+        {
+            MouseState mState = Mouse.GetState();
 
+            //Determines if the mouse button is being held down and if the mouse is hovering over the object.
+            if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                && mState.Position.X > position.X && mState.Position.X < (position.X + position.Width)
+                && mState.Position.Y > position.Y && mState.Position.Y < (position.Y + position.Height))
+            {
+                isDragAndDropping = true;
+            }
+
+            //Drags the object in accordance to the mouse's changing position.
+            //The dragging effect is set up so the object moves in the direction of the mouse's current position from the mouse's previous position.
+            if (isDragAndDropping)
+            {
+                int xDifference = mState.Position.X - previousMouseState.Position.X;
+                int yDifference = mState.Position.Y - previousMouseState.Position.Y;
+                position.X += xDifference;
+                position.Y += yDifference;
+            }
+
+            //Turns off the dragging effect if the mouse button is released and snaps moving shapes onto the spots.
+            if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released
+                && isDragAndDropping == true)
+            {
+                foreach (Rectangle gridSpot in grid.GridTiles())
+                {
+                    if (mState.X >= gridSpot.X && mState.X < gridSpot.X + gridSpot.Width
+                        && mState.Y >= gridSpot.Y && mState.Y < gridSpot.Y + gridSpot.Height)
+                    {
+                        position.X = gridSpot.X + 5;
+                        position.Y = gridSpot.Y + 5;
+                    }
+                }
+                isDragAndDropping = false;
+            }
+        }
     }
 }

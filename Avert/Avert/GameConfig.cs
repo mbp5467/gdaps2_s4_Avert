@@ -27,10 +27,10 @@ namespace Avert
                 while ((line = levelReader.ReadLine()) != null)
                 {
                     string[] data = line.Split(',');
-                    if (data[0] == level.ToString())
+                    if (data[0] == "/" && data[1] == level.ToString())
                     {
-                        gridSize_W = int.Parse(data[1]);
-                        gridSize_H = int.Parse(data[2]);
+                        gridSize_W = int.Parse(data[2]);
+                        gridSize_H = int.Parse(data[3]);
                         //set the size for each tile
                         tileSize = windowWidth / gridSize_W;
                         break;
