@@ -22,8 +22,8 @@ namespace Avert
 
         public Wall(Texture2D t)
             :base(t)
-        { 
-
+        {
+            Position = location;
         }
 
         public override void LoadLevel()
@@ -55,7 +55,6 @@ namespace Avert
                 
                 foreach (string s in data) 
                 {
-                    Console.WriteLine(s);
                     for (int i = 0; i < game.gridSize_W; i++)
                     {
                         for (int j = 0; j < game.gridSize_H; j++)

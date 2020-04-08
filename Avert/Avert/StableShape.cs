@@ -21,6 +21,8 @@ namespace Avert
         public Rectangle Position
         {
             get { return position; }
+
+            set { position = value; }
         }
 
         public bool Active

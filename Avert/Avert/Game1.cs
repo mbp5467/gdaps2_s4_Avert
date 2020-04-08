@@ -77,7 +77,7 @@ namespace Avert
 
         private Mirror mirror;
         private MoveableShape moveableShape;
-        private Wall walll;
+        private Wall walls;
          
         GameConfig setup = new GameConfig();
 
@@ -115,6 +115,7 @@ namespace Avert
             this.IsMouseVisible = true;
             loadLevel = false;
             mirror = new Mirror(mirrorTexture, imageRectangle);
+            walls = new Wall(wallBlue);
             base.Initialize();
         }
         
@@ -197,8 +198,6 @@ namespace Avert
                     {
                         currentState = GameStates.Failure;
                     }
-
-                    walll = new Wall(wallBlue);
 
                    break;
 
@@ -360,8 +359,8 @@ namespace Avert
                         spriteBatch.Draw(mirrorTexture, imageRectangle, Color.White);
                     }
 
-                    //walll.Draw(spriteBatch);
-                    
+                    walls.Draw(spriteBatch);
+
                     break;
 
                 case GameStates.Failure:
