@@ -36,10 +36,11 @@ namespace Avert
 
 
         private SpriteFont mainFont;
-        private SpriteFont controlFont;
         private Texture2D mirrorTexture;
         private Texture2D gridTexture;
         private Texture2D redBox; //Fields for fonts and images
+        
+        private Texture2D wallBlue;
 
         const float xBoundary = 600f;
         const float yBoundary = 600f;
@@ -67,7 +68,8 @@ namespace Avert
 
         private Mirror mirror;
         private MoveableShape moveableShape;
-         
+        private Wall wall;
+
         GameConfig setup = new GameConfig();
 
         public Game1()
@@ -233,6 +235,7 @@ namespace Avert
             gridTexture = Content.Load<Texture2D>("gridTexture");
             redBox = Content.Load<Texture2D>("redBox"); //Soon to be replaced with drawings
 
+            wallBlue = Content.Load<Texture2D>("textures/objects/wall_blue");
         }
 
         /// <summary>
@@ -253,6 +256,7 @@ namespace Avert
         {
 
             // TODO: Add your update logic here
+            wall = new Wall(redBox);
             // timer system
             if (currentState == GameStates.Stage)
             {
@@ -272,7 +276,7 @@ namespace Avert
                 loadLevel = false;
             }
             ProcessInput();
-            mirror.Update(gameTime);
+            //mirror.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -333,7 +337,9 @@ namespace Avert
                     {
                         spriteBatch.Draw(mirrorTexture, imageRectangle, Color.White);
                     }
-                    
+                    wall.Draw(spriteBatch);
+
+
                     break;
 
                 case GameStates.Failure:

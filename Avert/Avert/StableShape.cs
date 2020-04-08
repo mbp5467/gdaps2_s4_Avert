@@ -30,10 +30,9 @@ namespace Avert
         }
 
         //Constuctor
-        protected StableShape(Texture2D t, Rectangle r)
+        protected StableShape(Texture2D t)
         {
             this.texture = t;
-            this.position = r;
         }
 
         //Update the draw when laser hit

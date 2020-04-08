@@ -10,9 +10,9 @@ namespace Avert
         int level = 1;
         //Set the grid size
         // the number can be changed depends on the level(future)
-        int gridSize_W;
-        int gridSize_H;
-        int tileSize;
+        public int gridSize_W { get; set; }
+        public int gridSize_H { get; set; }
+        public int tileSize { get; set; }
         int windowWidth = 500;
         int windowHeight = 600;
 
