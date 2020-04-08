@@ -51,7 +51,7 @@ namespace Avert
             {
                 for (int j = 0; j < gridSize_H; j++) 
                 {
-                    gridPosition = new Rectangle(i * tileSize, j * tileSize,tileSize,tileSize);
+                    gridPosition = new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize);
                     spritebatch.Draw(gridTexture, gridPosition, Color.White);
                 }
             }

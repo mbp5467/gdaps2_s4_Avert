@@ -12,13 +12,13 @@ namespace Avert
 {
     /* This is child class of stable shape
      * Wall will block the laser*/
-    class Wall :StableShape
+    class Wall : StableShape
     {
-        SpriteBatch spriteBatch;
-        string[] data;
-        string line = null;
-        Rectangle location;
-        GameConfig game;
+        int level = 1;
+        int gridHeight;
+        int gridWidth;
+        int numberOfWalls = 0;
+        int count = 0;
 
         public Wall(Texture2D t)
             :base(t)
@@ -33,47 +33,35 @@ namespace Avert
             if (levels.Exists) 
             {
                 StreamReader levelReader = new StreamReader(filename);
+                string line = null;
+                int[,] coordinates;
                 while ((line = levelReader.ReadLine()) != null)
                 {
-                    data = line.Split(',');
-                    if (data[0] == "/" && data[4] != "0")
+                    string[] data = line.Split(',');
+                    if (data[0] == "/" && data[1] == level.ToString())
                     {
-                        active = true;
-                        Draw(spriteBatch);
+                        gridWidth = int.Parse(data[2]);
+                        gridHeight = int.Parse(data[3]);
+                    }
+                    coordinates = new int[gridWidth, gridHeight];
+                    if (data[0] != "/" && gridHeight > 0)
+                    {
+                        for (int i = 0; i < gridWidth; i++)
+                        {
+                            if (data[i] == "-")
+                            {
+                                coordinates[int.Parse(data[i]), count] = 1;
+                            }
+                        }
+                        count++;
+                    }
+                    if (count == gridHeight)
+                    {
                         break;
                     }
                 }
                 levelReader.Close();
             }
-
         }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            if (active == true)
-            {
-                
-                foreach (string s in data) 
-                {
-                    Console.WriteLine(s);
-                    for (int i = 0; i < game.gridSize_W; i++)
-                    {
-                        for (int j = 0; j < game.gridSize_H; j++)
-                        {
-                            if (s == "-")
-                            {
-                                location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                                spriteBatch.Draw(texture, location, Color.White);
-                            }
-                        }
-                    }
-                    
-                }
-            }
-
-        }
-
-        
     }
-    
 }
