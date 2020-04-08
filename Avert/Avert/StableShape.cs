@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Avert
 {
@@ -10,6 +12,39 @@ namespace Avert
      */
     abstract class StableShape
     {
+        //Field & properties
+        protected Texture2D texture;
+        protected Rectangle position;
+        protected bool active = false;
 
+        // Store the position in rectagle for collision later
+        public Rectangle Position
+        {
+            get { return position; }
+        }
+
+        public bool Active
+        {
+            get { return active; }
+            set { active = value; }
+        }
+
+        //Constuctor
+        protected StableShape(Texture2D t, Rectangle r)
+        {
+            this.texture = t;
+            this.position = r;
+        }
+
+        //Update the draw when laser hit
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(texture, position, Color.White);
+        }
+
+        //Load the position of stableShape in each level
+        public abstract void LoadLevel();
+
+        
     }
 }
