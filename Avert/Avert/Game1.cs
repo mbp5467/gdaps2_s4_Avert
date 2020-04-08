@@ -258,7 +258,7 @@ namespace Avert
             redBox = Content.Load<Texture2D>("textures/gui/menu_button"); //Soon to be replaced with drawings
             title = Content.Load<Texture2D>("textures/gui/title");
 
-
+            mirror = new Mirror(mirrorTexture, imageRectangle);
         }
 
         /// <summary>

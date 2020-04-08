@@ -15,12 +15,11 @@ namespace Avert
      */
     class Mirror:MoveableShape
     {
-        private MouseState previousMouseState;
-        private bool isDragAndDropping;
-
+        GameConfig shapeSize = new GameConfig();
         public Mirror (Texture2D t, Rectangle r):base (t, r)
         {
             active = false;
+            shapeSize.LoadLevel();
         }
         int numberOfMirrors = 0;
         public override void LoadLevel()
@@ -47,6 +46,8 @@ namespace Avert
 
         public override void Update(GameTime gameTime)
         {
+            position.Width = shapeSize.ShapeSize();
+            position.Height = shapeSize.ShapeSize();
             ProcessInput();
         }
     }
