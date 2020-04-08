@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Avert
 {
@@ -62,6 +63,7 @@ namespace Avert
                                  //as well as a GameStates enum
 
         bool loadLevel;
+        private List<Rectangle> spots;
 
         //Used to determine if the object is being dragged by the mouse.
         bool isDragAndDropping;
@@ -256,7 +258,7 @@ namespace Avert
             redBox = Content.Load<Texture2D>("textures/gui/menu_button"); //Soon to be replaced with drawings
             title = Content.Load<Texture2D>("textures/gui/title");
 
-
+            mirror = new Mirror(mirrorTexture, imageRectangle);
         }
 
         /// <summary>
@@ -284,11 +286,12 @@ namespace Avert
                 if (loadLevel == false)
                 {
                     setup.LoadLevel();
-                    mirror.LoadLevel();
-                    loadLevel = true;
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
+                    mirror.LoadLevel();
+                    loadLevel = true;
                 }
+                mirror.Update(gameTime);
             }
             else if (currentState != GameStates.Stage)
             {
@@ -296,7 +299,6 @@ namespace Avert
                 loadLevel = false;
             }
             ProcessInput();
-            //mirror.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -356,7 +358,7 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
                     if (mirror.Active == true)
                     {
-                        spriteBatch.Draw(mirrorTexture, imageRectangle, Color.White);
+                        mirror.Draw(spriteBatch);
                     }
 
                     walls.Draw(spriteBatch);

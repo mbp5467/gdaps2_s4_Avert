@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Avert
 {
@@ -14,9 +15,11 @@ namespace Avert
      */
     class Mirror:MoveableShape
     {
+        GameConfig shapeSize = new GameConfig();
         public Mirror (Texture2D t, Rectangle r):base (t, r)
         {
             active = false;
+            shapeSize.LoadLevel();
         }
         int numberOfMirrors = 0;
         public override void LoadLevel()
@@ -39,6 +42,13 @@ namespace Avert
                 }
                 levelReader.Close();
             }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            position.Width = shapeSize.ShapeSize();
+            position.Height = shapeSize.ShapeSize();
+            ProcessInput();
         }
     }
 }
