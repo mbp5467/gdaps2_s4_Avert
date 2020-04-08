@@ -33,6 +33,7 @@ namespace Avert
         private Rectangle controlRectangle;
         private Rectangle levelRectangle;
         private Rectangle gameRectangle; //Fields for the fonts, textures, and Vectors/Rectangles
+        private Rectangle titleRectangle;
 
 
         private SpriteFont mainFont;
@@ -40,6 +41,15 @@ namespace Avert
         private Texture2D mirrorTexture;
         private Texture2D gridTexture;
         private Texture2D redBox; //Fields for fonts and images
+        private Texture2D title;
+        private Texture2D background;
+        private Texture2D backgroundRed;
+        private Texture2D wall;
+        private Texture2D wallRed;
+        private Texture2D start;
+        private Texture2D target;
+        private Texture2D targetFilled;
+
 
         const float xBoundary = 600f;
         const float yBoundary = 600f;
@@ -78,7 +88,9 @@ namespace Avert
             //Changing the width and height of the screen to 500x600
             graphics.PreferredBackBufferWidth = 500;
             graphics.PreferredBackBufferHeight = 600;
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
             graphics.ApplyChanges();
+
         }
 
         /// <summary>
@@ -97,6 +109,7 @@ namespace Avert
             controlRectangle = new Rectangle(40, 330, 130, 50);
             levelRectangle = new Rectangle(340, 330, 130, 50);
             gameRectangle = new Rectangle(180, 330, 130, 50);
+            titleRectangle = new Rectangle(100, 100, 320, 180);
             isDragAndDropping = false;
             this.IsMouseVisible = true;
             loadLevel = false;
@@ -229,9 +242,18 @@ namespace Avert
             mainFont = Content.Load<SpriteFont>("ControlText");
 
             // TODO: use this.Content to load your game content here
-            mirrorTexture = Content.Load<Texture2D>("Circle");
-            gridTexture = Content.Load<Texture2D>("gridTexture");
-            redBox = Content.Load<Texture2D>("redBox"); //Soon to be replaced with drawings
+            mirrorTexture = Content.Load<Texture2D>("textures/objects/mirror");
+            background = Content.Load<Texture2D>("textures/Backgrounds/background_blue");
+            backgroundRed = Content.Load<Texture2D>("textures/Backgrounds/background_red");//Background turns red when player beats the level.
+            wall = Content.Load<Texture2D>("textures/objects/wall_blue");
+            wallRed = Content.Load<Texture2D>("textures/objects/wall_red");//wall turns red when player beats the level.
+            start = Content.Load<Texture2D>("textures/objects/blaster");
+            target = Content.Load<Texture2D>("textures/objects/target_empty");
+            targetFilled = Content.Load<Texture2D>("textures/objects/target_filled");
+            gridTexture = Content.Load<Texture2D>("textures/Backgrounds/gridlines");
+            redBox = Content.Load<Texture2D>("textures/gui/menu_button"); //Soon to be replaced with drawings
+            title = Content.Load<Texture2D>("textures/gui/title");
+
 
         }
 
@@ -272,7 +294,7 @@ namespace Avert
                 loadLevel = false;
             }
             ProcessInput();
-            mirror.Update(gameTime);
+            //mirror.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -295,39 +317,40 @@ namespace Avert
             {
                 case GameStates.Menu:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Welcome to Avert.\n", new Vector2(100f, 100f), Color.Red);
+                    spriteBatch.Draw(title, titleRectangle, Color.White);
                     spriteBatch.Draw(redBox, controlRectangle, Color.White);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Control", new Vector2(50f,350f), Color.Red);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f,350f),Color.Red);
+                    spriteBatch.DrawString(mainFont, "Control", new Vector2(50f,350f), Color.White);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f,350f),Color.White);
+                    
                     break;
 
                 case GameStates.Control:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Control", new Vector2(200f, 100f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Control", new Vector2(200f, 100f), Color.White);
                     spriteBatch.DrawString(mainFont,"Click and drag the objects with the mouse,\n" +
                         " shoot the laser with the space bar, and \n" +
-                        "hit the target to clear the level!",new Vector2(50f,200f),Color.Red);
+                        "hit the target to clear the level!",new Vector2(50f,200f),Color.White);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.White);
                     spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f,350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f,350f), Color.White);
 
                     break;
 
                 case GameStates.Select:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(200f, 100f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(200f, 100f), Color.White);
                     spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f, 350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f, 350f), Color.White);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.White);
                     break;
 
                 case GameStates.Stage:
                     //Drawing the grid
                     setup.Draw(spriteBatch, gridTexture);
-                    GraphicsDevice.Clear(Color.Yellow);
+                    GraphicsDevice.Clear(Color.Aquamarine);
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
                     if (mirror.Active == true)
                     {
