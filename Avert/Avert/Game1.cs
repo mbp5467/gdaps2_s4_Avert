@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Avert
 {
@@ -52,6 +53,7 @@ namespace Avert
                                  //as well as a GameStates enum
 
         bool loadLevel;
+        private List<Rectangle> spots;
 
         //Used to determine if the object is being dragged by the mouse.
         bool isDragAndDropping;
@@ -100,7 +102,6 @@ namespace Avert
             isDragAndDropping = false;
             this.IsMouseVisible = true;
             loadLevel = false;
-            mirror = new Mirror(mirrorTexture, imageRectangle);
             base.Initialize();
         }
         
@@ -229,10 +230,11 @@ namespace Avert
             mainFont = Content.Load<SpriteFont>("ControlText");
 
             // TODO: use this.Content to load your game content here
-            mirrorTexture = Content.Load<Texture2D>("Circle");
+            mirrorTexture = Content.Load<Texture2D>("textures\\objects\\mirror");
+            mirror = new Mirror(mirrorTexture, imageRectangle);
             gridTexture = Content.Load<Texture2D>("gridTexture");
             redBox = Content.Load<Texture2D>("redBox"); //Soon to be replaced with drawings
-
+            spots = new List<Rectangle>();
         }
 
         /// <summary>
@@ -260,11 +262,12 @@ namespace Avert
                 if (loadLevel == false)
                 {
                     setup.LoadLevel();
-                    mirror.LoadLevel();
-                    loadLevel = true;
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
+                    mirror.LoadLevel();
+                    loadLevel = true;
                 }
+                mirror.Update(gameTime);
             }
             else if (currentState != GameStates.Stage)
             {
@@ -272,7 +275,6 @@ namespace Avert
                 loadLevel = false;
             }
             ProcessInput();
-            mirror.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -312,7 +314,6 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
                     spriteBatch.Draw(redBox, gameRectangle, Color.White);
                     spriteBatch.DrawString(mainFont, "Game", new Vector2(200f,350f), Color.Red);
-
                     break;
 
                 case GameStates.Select:
@@ -331,9 +332,8 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
                     if (mirror.Active == true)
                     {
-                        spriteBatch.Draw(mirrorTexture, imageRectangle, Color.White);
+                        mirror.Draw(spriteBatch);
                     }
-                    
                     break;
 
                 case GameStates.Failure:

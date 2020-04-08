@@ -21,7 +21,6 @@ namespace Avert
 
         private MouseState previousMouseState;
         private bool isDragAndDropping;
-        private GameConfig grid;
 
         // Store the position in rectagle for collision later
         // the postion could be changed due to the movement
@@ -40,12 +39,12 @@ namespace Avert
         }
 
         //Constructor
-        protected MoveableShape(Texture2D t, Rectangle r) 
+        protected MoveableShape(Texture2D texture, Rectangle position) 
         {
-            this.texture = t;
-            this.position = r;
+            this.texture = texture;
+            this.position = position;
+            previousMouseState = Mouse.GetState();
             isDragAndDropping = false;
-            grid = new GameConfig();
         }
 
         //Loads each movable shape
@@ -58,9 +57,14 @@ namespace Avert
             spriteBatch.Draw(texture, position, Color.White);
         }
 
-        public void ProcessInput()
+        // moveable shape will have a update location when moving
+        public abstract void Update(GameTime gameTime);
+
+        public virtual void ProcessInput()
         {
             MouseState mState = Mouse.GetState();
+            GameConfig setup = new GameConfig();
+            setup.LoadLevel();
 
             //Determines if the mouse button is being held down and if the mouse is hovering over the object.
             if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
@@ -84,7 +88,7 @@ namespace Avert
             if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released
                 && isDragAndDropping == true)
             {
-                foreach (Rectangle gridSpot in grid.GridTiles())
+                foreach (Rectangle gridSpot in setup.GridTiles())
                 {
                     if (mState.X >= gridSpot.X && mState.X < gridSpot.X + gridSpot.Width
                         && mState.Y >= gridSpot.Y && mState.Y < gridSpot.Y + gridSpot.Height)
@@ -95,6 +99,8 @@ namespace Avert
                 }
                 isDragAndDropping = false;
             }
+
+            previousMouseState = mState;
         }
     }
 }

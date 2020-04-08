@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Avert
 {
@@ -14,6 +15,9 @@ namespace Avert
      */
     class Mirror:MoveableShape
     {
+        private MouseState previousMouseState;
+        private bool isDragAndDropping;
+
         public Mirror (Texture2D t, Rectangle r):base (t, r)
         {
             active = false;
@@ -39,6 +43,11 @@ namespace Avert
                 }
                 levelReader.Close();
             }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            ProcessInput();
         }
     }
 }
