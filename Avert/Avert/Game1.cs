@@ -36,6 +36,7 @@ namespace Avert
         private Rectangle levelRectangle;
         private Rectangle gameRectangle; //Fields for the fonts, textures, and Vectors/Rectangles
         private Rectangle titleRectangle;
+        private Rectangle laserRectangle;
 
 
         private SpriteFont mainFont;
@@ -51,6 +52,7 @@ namespace Avert
         private Texture2D start;
         private Texture2D target;
         private Texture2D targetFilled;
+        private Texture2D laser;
 
 
         const float xBoundary = 600f;
@@ -276,6 +278,7 @@ namespace Avert
             mainFont = Content.Load<SpriteFont>("ControlText");
 
             // TODO: use this.Content to load your game content here
+            laser = Content.Load<Texture2D>("textures/laser/laser");
             mirrorTexture = Content.Load<Texture2D>("textures/objects/mirror");
             background = Content.Load<Texture2D>("textures/Backgrounds/background_blue");
             backgroundRed = Content.Load<Texture2D>("textures/Backgrounds/background_red");//Background turns red when player beats the level.
