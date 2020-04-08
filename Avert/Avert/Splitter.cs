@@ -8,8 +8,8 @@ namespace Avert
 {
     /* Child class of moveableshape
     * Splitter will split one laser bean into two way laser beans
-    */
     class Splitter :MoveableShape
     {
     }
+    */
 }

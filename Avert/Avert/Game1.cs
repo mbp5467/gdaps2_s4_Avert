@@ -91,7 +91,7 @@ namespace Avert
             previousKeyboardState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
             currentState = GameStates.Menu;
-            imageRectangle = new Rectangle(200, 250, 50, 50);
+            imageRectangle = new Rectangle(405, 505, 50, 50);
             controlRectangle = new Rectangle(40, 330, 130, 50);
             levelRectangle = new Rectangle(340, 330, 130, 50);
             gameRectangle = new Rectangle(180, 330, 130, 50);
@@ -186,9 +186,19 @@ namespace Avert
                         imageRectangle.Y += yDifference;
                     }
 
-                    //Turns off the dragging effect if the mouse button is released.
-                    if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released)
+                    //Turns off the dragging effect if the mouse button is released and snaps moving shapes onto the spots.
+                    if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released 
+                        && isDragAndDropping == true)
                     {
+                        foreach (Rectangle gridSpot in setup.GridTiles())
+                        {
+                            if (mState.X >= gridSpot.X && mState.X < gridSpot.X + gridSpot.Width
+                                && mState.Y >= gridSpot.Y && mState.Y < gridSpot.Y + gridSpot.Height)
+                            {
+                                imageRectangle.X = gridSpot.X + 5;
+                                imageRectangle.Y = gridSpot.Y + 5;
+                            }
+                        }
                         isDragAndDropping = false;
                     }
                     
@@ -281,6 +291,8 @@ namespace Avert
                 {
                     setup.LoadLevel();
                     loadLevel = true;
+                    imageRectangle.Width = setup.ShapeSize();
+                    imageRectangle.Height = setup.ShapeSize();
                 }
             }
             else if (currentState != GameStates.Stage)
@@ -289,7 +301,7 @@ namespace Avert
                 loadLevel = false;
             }
             ProcessInput();
-
+            
             base.Update(gameTime);
         }
 

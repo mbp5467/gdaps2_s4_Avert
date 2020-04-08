@@ -8,8 +8,8 @@ namespace Avert
 {
     /* This is child class of stable shape
      * Wall will block the laser
-    */
     class Wall :StableShape
     {
     }
+    */
 }

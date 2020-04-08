@@ -8,8 +8,8 @@ namespace Avert
 {
     /* Child class of moveableshape
      * Mirror will reflact the laser bean with X degree of angle
-     */
     class Mirror:MoveableShape
     {
     }
+    */
 }

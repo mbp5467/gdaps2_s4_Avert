@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Avert
 {
@@ -50,14 +51,32 @@ namespace Avert
             {
                 for (int j = 0; j < gridSize_H; j++) 
                 {
-                   
                     gridPosition = new Rectangle(i * tileSize, j * tileSize,tileSize,tileSize);
-                    spritebatch.Draw(gridTexture,gridPosition,Color.White);
+                    spritebatch.Draw(gridTexture,gridPosition, Color.White);
                 }
             }
         }
 
+        //Allows other classes to use the spots on the grid.
+        public List<Rectangle> GridTiles()
+        {
+            List<Rectangle> spots = new List<Rectangle>();
+            for (int i = 0; i < gridSize_W; i++)
+            {
+                for (int j = 0; j < gridSize_H; j++)
+                {
+                    gridPosition = new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize);
+                    spots.Add(gridPosition);
+                }
+            }
+            return spots;
+        }
 
+        //Adjusts the size of the shapes according to the size of the grid
+        public int ShapeSize()
+        {
+            return windowWidth / gridSize_W - 10;
+        }
         
     }
 }
