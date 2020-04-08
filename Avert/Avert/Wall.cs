@@ -15,31 +15,31 @@ namespace Avert
     class Wall :StableShape
     {
         SpriteBatch spriteBatch;
-        string[] data;
-        string line = null;
         Rectangle location;
-        GameConfig game;
+        string[] data;
+        GameConfig game = new GameConfig();
 
         public Wall(Texture2D t)
             :base(t)
         {
             Position = location;
+            game.LoadLevel();
         }
 
         public override void LoadLevel()
         {
             string filename = "Levels.txt";
             FileInfo levels = new FileInfo(filename);
-            if (levels.Exists) 
+            if (levels.Exists)
             {
                 StreamReader levelReader = new StreamReader(filename);
+                string line = null;
                 while ((line = levelReader.ReadLine()) != null)
                 {
                     data = line.Split(',');
-                    if (data[0] == "/" && data[4] != "0")
+                    if (data[0] == "/")
                     {
                         active = true;
-                        Draw(spriteBatch);
                         break;
                     }
                 }
@@ -48,31 +48,52 @@ namespace Avert
 
         }
 
+        
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (active == true)
+
+            location = new Rectangle(3 * game.tileSize, 1 * game.tileSize, game.ShapeSize(), game.ShapeSize());
+            spriteBatch.Draw(texture, location, Color.White);
+
+            /*if (active == true)
             {
-                
-                foreach (string s in data) 
+
+                for (int k = 0; k < data.Length; k++)
                 {
                     for (int i = 0; i < game.gridSize_W; i++)
                     {
                         for (int j = 0; j < game.gridSize_H; j++)
                         {
-                            if (s == "-")
-                            {
-                                location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                                spriteBatch.Draw(texture, location, Color.White);
-                            }
+                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, location, Color.White);
+                        }
+
+                    }
+
+                }*/
+
+
+            /*
+             * foreach (string s in data)
+            {
+                for (int i = 0; i < game.gridSize_W; i++)
+                {
+                    for (int j = 0; j < game.gridSize_H; j++)
+                    {
+                        if ( == "-")
+                        {
+                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, location, Color.White);
                         }
                     }
-                    
                 }
-            }
+
+            }*/
+        }
+
 
         }
 
         
     }
     
-}
