@@ -14,54 +14,84 @@ namespace Avert
      * Wall will block the laser*/
     class Wall : StableShape
     {
-        int level = 1;
-        int gridHeight;
-        int gridWidth;
-        int numberOfWalls = 0;
-        int count = 0;
+        SpriteBatch spriteBatch;
+        Rectangle location;
+        string[] data;
+        GameConfig game = new GameConfig();
 
         public Wall(Texture2D t)
             :base(t)
-        { 
-
+        {
+            Position = location;
+            game.LoadLevel();
         }
 
         public override void LoadLevel()
         {
             string filename = "Levels.txt";
             FileInfo levels = new FileInfo(filename);
-            if (levels.Exists) 
+            if (levels.Exists)
             {
                 StreamReader levelReader = new StreamReader(filename);
                 string line = null;
-                int[,] coordinates;
                 while ((line = levelReader.ReadLine()) != null)
                 {
-                    string[] data = line.Split(',');
-                    if (data[0] == "/" && data[1] == level.ToString())
+                    data = line.Split(',');
+                    if (data[0] == "/")
                     {
-                        gridWidth = int.Parse(data[2]);
-                        gridHeight = int.Parse(data[3]);
-                    }
-                    coordinates = new int[gridWidth, gridHeight];
-                    if (data[0] != "/" && gridHeight > 0)
-                    {
-                        for (int i = 0; i < gridWidth; i++)
-                        {
-                            if (data[i] == "-")
-                            {
-                                coordinates[int.Parse(data[i]), count] = 1;
-                            }
-                        }
-                        count++;
-                    }
-                    if (count == gridHeight)
-                    {
+                        active = true;
                         break;
                     }
                 }
                 levelReader.Close();
             }
+
+        }
+
+        
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+
+            location = new Rectangle(3 * game.tileSize, 1 * game.tileSize, game.ShapeSize(), game.ShapeSize());
+            spriteBatch.Draw(texture, location, Color.White);
+
+            /*if (active == true)
+            {
+
+                for (int k = 0; k < data.Length; k++)
+                {
+                    for (int i = 0; i < game.gridSize_W; i++)
+                    {
+                        for (int j = 0; j < game.gridSize_H; j++)
+                        {
+                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, location, Color.White);
+                        }
+
+                    }
+
+                }*/
+
+
+            /*
+             * foreach (string s in data)
+            {
+                for (int i = 0; i < game.gridSize_W; i++)
+                {
+                    for (int j = 0; j < game.gridSize_H; j++)
+                    {
+                        if ( == "-")
+                        {
+                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, location, Color.White);
+                        }
+                    }
+                }
+
+            }*/
+        }
+
+
         }
     }
-}
+    

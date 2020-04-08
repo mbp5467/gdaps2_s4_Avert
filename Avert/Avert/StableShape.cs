@@ -21,6 +21,8 @@ namespace Avert
         public Rectangle Position
         {
             get { return position; }
+
+            set { position = value; }
         }
 
         public bool Active
@@ -38,7 +40,7 @@ namespace Avert
         //Update the draw when laser hit
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, Color.White);
+            spriteBatch.Draw(texture, position, Color.Black);
         }
 
         //Load the position of stableShape in each level

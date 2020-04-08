@@ -18,7 +18,8 @@ namespace Avert
         Control,
         Select,
         Stage,
-        Failure
+        Failure,
+        Wins
     }
     public class Game1 : Game
     {
@@ -35,6 +36,7 @@ namespace Avert
         private Rectangle levelRectangle;
         private Rectangle gameRectangle; //Fields for the fonts, textures, and Vectors/Rectangles
         private Rectangle titleRectangle;
+        private Rectangle laserRectangle;
 
 
         private SpriteFont mainFont;
@@ -50,6 +52,7 @@ namespace Avert
         private Texture2D start;
         private Texture2D target;
         private Texture2D targetFilled;
+        private Texture2D laser;
 
 
         const float xBoundary = 600f;
@@ -79,7 +82,9 @@ namespace Avert
 
         private Mirror mirror;
         private MoveableShape moveableShape;
-        private Wall walll;
+        private Wall walls;
+        private Target targets;
+        private Laser lasers;
          
         GameConfig setup = new GameConfig();
 
@@ -116,6 +121,10 @@ namespace Avert
             isDragAndDropping = false;
             this.IsMouseVisible = true;
             loadLevel = false;
+            mirror = new Mirror(mirrorTexture, imageRectangle);
+            walls = new Wall(wallBlue);
+            targets = new Target(target);
+            lasers = new Laser(start);
             base.Initialize();
         }
         
@@ -191,15 +200,22 @@ namespace Avert
                     if (kbState.IsKeyDown(Keys.R))
                    {
                         life--;
-                      currentState = GameStates.Failure;
+                        currentState = GameStates.Failure;
                    }
                     //Game over if your life is out or there's no time left
                     if (life == 0 || timer <= 0) 
                     {
+                        life--;
                         currentState = GameStates.Failure;
                     }
 
-                    walll = new Wall(wallBlue);
+                    // 1 & 3
+                    if (mirror.Position.X >= setup.tileSize && mirror.Position.X <= (2* setup.tileSize) &&
+                        mirror.Position.Y >= (3*setup.tileSize) && mirror.Position.Y <= (4 * setup.tileSize))
+                    {
+                            currentState = GameStates.Wins;
+                    }
+
 
                    break;
 
@@ -216,6 +232,7 @@ namespace Avert
                    {
                      currentState = GameStates.Menu;
                    }
+
                     if (life > 0)
                     {
                         if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
@@ -228,6 +245,21 @@ namespace Avert
                         }
                     }
                    break;
+
+                case GameStates.Wins:
+                    if(mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                       && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
+                       && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
+                        || kbState.IsKeyDown(Keys.L))
+                   {
+                        currentState = GameStates.Select;
+                    }
+
+                    if (kbState.IsKeyDown(Keys.Escape))
+                    {
+                        currentState = GameStates.Menu;
+                    }
+                    break;
 
             }
             previousKeyboardState = kbState;
@@ -246,6 +278,7 @@ namespace Avert
             mainFont = Content.Load<SpriteFont>("ControlText");
 
             // TODO: use this.Content to load your game content here
+            laser = Content.Load<Texture2D>("textures/laser/laser");
             mirrorTexture = Content.Load<Texture2D>("textures/objects/mirror");
             background = Content.Load<Texture2D>("textures/Backgrounds/background_blue");
             backgroundRed = Content.Load<Texture2D>("textures/Backgrounds/background_red");//Background turns red when player beats the level.
@@ -259,6 +292,10 @@ namespace Avert
             title = Content.Load<Texture2D>("textures/gui/title");
 
             mirror = new Mirror(mirrorTexture, imageRectangle);
+            walls = new Wall(wallBlue);
+            targets = new Target(target);
+            lasers = new Laser(start);
+
         }
 
         /// <summary>
@@ -289,6 +326,7 @@ namespace Avert
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
                     mirror.LoadLevel();
+                    walls.LoadLevel();
                     loadLevel = true;
                 }
                 mirror.Update(gameTime);
@@ -360,8 +398,10 @@ namespace Avert
                     {
                         mirror.Draw(spriteBatch);
                     }
-
-                    //walll.Draw(spriteBatch);
+                    
+                    walls.Draw(spriteBatch);
+                    targets.Draw(spriteBatch);
+                    lasers.Draw(spriteBatch);
                     
                     break;
 
@@ -372,6 +412,18 @@ namespace Avert
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
                     spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
                     if (life > 0) 
+                    {
+                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                        spriteBatch.DrawString(mainFont, "Restart", new Vector2(190f, 350f), Color.Red);
+                    }
+                    break;
+                case GameStates.Wins:
+                    GraphicsDevice.Clear(Color.Black);
+                    spriteBatch.DrawString(mainFont, "Win!", new Vector2(100f, 100f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Score: 10", new Vector2(100f, 200f), Color.Red);
+                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
+                    if (life > 0)
                     {
                         spriteBatch.Draw(redBox, gameRectangle, Color.White);
                         spriteBatch.DrawString(mainFont, "Restart", new Vector2(190f, 350f), Color.Red);
