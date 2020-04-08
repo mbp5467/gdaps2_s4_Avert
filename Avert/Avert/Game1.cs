@@ -45,7 +45,7 @@ namespace Avert
         private Texture2D title;
         private Texture2D background;
         private Texture2D backgroundRed;
-        private Texture2D wall;
+        private Texture2D wallBlue;
         private Texture2D wallRed;
         private Texture2D start;
         private Texture2D target;
@@ -79,6 +79,7 @@ namespace Avert
 
         private Mirror mirror;
         private MoveableShape moveableShape;
+        private Wall walll;
          
         GameConfig setup = new GameConfig();
 
@@ -198,6 +199,8 @@ namespace Avert
                         currentState = GameStates.Failure;
                     }
 
+                    walll = new Wall(wallBlue);
+
                    break;
 
                 case GameStates.Failure:
@@ -246,7 +249,7 @@ namespace Avert
             mirrorTexture = Content.Load<Texture2D>("textures/objects/mirror");
             background = Content.Load<Texture2D>("textures/Backgrounds/background_blue");
             backgroundRed = Content.Load<Texture2D>("textures/Backgrounds/background_red");//Background turns red when player beats the level.
-            wall = Content.Load<Texture2D>("textures/objects/wall_blue");
+            wallBlue = Content.Load<Texture2D>("textures/objects/wall_blue");
             wallRed = Content.Load<Texture2D>("textures/objects/wall_red");//wall turns red when player beats the level.
             start = Content.Load<Texture2D>("textures/objects/blaster");
             target = Content.Load<Texture2D>("textures/objects/target_empty");
@@ -357,6 +360,9 @@ namespace Avert
                     {
                         mirror.Draw(spriteBatch);
                     }
+
+                    //walll.Draw(spriteBatch);
+                    
                     break;
 
                 case GameStates.Failure:
