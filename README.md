@@ -42,11 +42,9 @@ The repository and branches are mainly being used to keep track of which tasks h
 | File/Directory | Contents |
 | -------------- | ----------- |
 | [Google Documentation](TBD) | https://docs.google.com/document/d/1nSW5v7hB6X4PuBVPtCtv6lNH2kY1LTXddgQnLUTfOec/edit?ts=5e3848da#heading=h.t0sfhbwed8te
-| [game/ReleaseNotes.md](src/ReleaseNotes.md) | MonoGame release notes _Update this with each milestone._|
-..Milestone 2 expanded on the implementation greatly by implementing the external tool, and all of the code for the child classe needed from their respective abstract classes.
-| [external_tool/ReleaseNotes.md](src/ReleaseNotes.md) | External tool release notes _Update this with each milestone._| 
-...The implementation of the external tool for milestone 2 has started. It loads a level with a .txt file, and can be tested when the player tries to load a level. However, this only counts for a tutorial level and not for any physically playable stages.
-...A bug regarding the external tool takes place with the stable shapes. The data from the .txt file is supposed to load the stable shapes inside the level, however the stable shape always returns null. For now the stable shapes had to be hard-coded.
+| [game/ReleaseNotes.md](src/ReleaseNotes.md) | MonoGame release notes _Update this with each milestone. ..Milestone 2 expanded on the implementation greatly by implementing the external tool, and all of the code for the child classe needed from their respective abstract classes.|
+| [external_tool/ReleaseNotes.md](src/ReleaseNotes.md) | External tool release notes _Update this with each milestone._...The implementation of the external tool for milestone 2 has started. It loads a level with a .txt file, and can be tested when the player tries to load a level. However, this only counts for a tutorial level and not for any physically playable stages.
+...A bug regarding the external tool takes place with the stable shapes. The data from the .txt file is supposed to load the stable shapes inside the level, however the stable shape always returns null. For now the stable shapes had to be hard-coded.| 
 
 ## Other Resources
 - [MonoGame Documentation](http://www.monogame.net/documentation/?page=main)
