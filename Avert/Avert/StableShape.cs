@@ -18,6 +18,8 @@ namespace Avert
         protected bool active = false;
 
         // Store the position in rectagle for collision later
+        //and changing the active value using getter and
+        //setter properties
         public Rectangle Position
         {
             get { return position; }

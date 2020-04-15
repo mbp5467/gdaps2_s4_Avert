@@ -15,13 +15,25 @@ namespace Avert
      */
     class Mirror:MoveableShape
     {
+        //New GameConfig for size of the shape
         GameConfig shapeSize = new GameConfig();
+
+        //Parameterized constructor that sets active to false and calls
+        //LoadLevel on the shapeSize
         public Mirror (Texture2D t, Rectangle r):base (t, r)
         {
             active = false;
             shapeSize.LoadLevel();
         }
-        int numberOfMirrors = 0;
+
+        int numberOfMirrors = 0; //This is for future levels that require more
+                                 //than one mirror
+
+        //Method for LoadLevel which sets a fileName
+        //and creates a FileInfo object. It checks if levels exists,
+        //and if it does a new StreamReader is created. While the
+        //created line is not null, it reads data from the file.
+        //If the data is [/], active is set to true.
         public override void LoadLevel()
         {
             string filename = "Levels.txt";
@@ -44,6 +56,8 @@ namespace Avert
             }
         }
 
+        //Update method which change the width and height and allows
+        //user input
         public override void Update(GameTime gameTime)
         {
             position.Width = shapeSize.ShapeSize();

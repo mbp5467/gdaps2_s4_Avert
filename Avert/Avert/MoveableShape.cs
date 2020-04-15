@@ -31,7 +31,6 @@ namespace Avert
             set { position = value; }
         }
 
-        //
         public bool Active 
         {
             get { return active; }
@@ -60,6 +59,7 @@ namespace Avert
         // moveable shape will have a update location when moving
         public abstract void Update(GameTime gameTime);
 
+        //Method for processing input
         public virtual void ProcessInput()
         {
             MouseState mState = Mouse.GetState();

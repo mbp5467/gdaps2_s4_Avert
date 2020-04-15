@@ -15,11 +15,16 @@ namespace Avert
      * Laser is the start point of the game*/
     class Laser:StableShape
     {
+        //Fields for the laser class, bring a spriteBatch
+        //for the laser, a rectangle location, a data
+        //array for saving, and a new game object.
         SpriteBatch spriteBatch;
         Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
 
+        //Paramaterized constructor that sets
+        //the position and calls the game's loadLevel method
         public Laser(Texture2D t)
             : base(t)
         {
@@ -27,6 +32,11 @@ namespace Avert
             game.LoadLevel();
         }
 
+        //Method for LoadLevel which sets a fileName
+        //and creates a FileInfo object. It checks if levels exists,
+        //and if it does a new StreamReader is created. While the
+        //created line is not null, it reads data from the file.
+        //If the data is [/], active is set to true.
         public override void LoadLevel()
         {
             string filename = "Levels.txt";

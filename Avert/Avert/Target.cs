@@ -15,11 +15,15 @@ namespace Avert
      * Target is the ending point of the game*/
     class Target : StableShape
     {
+        //Creating the fields for the target, being the spriteBatch,
+        //location, data array and a new Game object
         SpriteBatch spriteBatch;
         Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
 
+        //Parameterized constructor that sets the position property
+        //and calls LoadLevel onto the created game object.
         public Target(Texture2D t)
             : base(t)
         {
@@ -27,6 +31,11 @@ namespace Avert
             game.LoadLevel();
         }
 
+        //Method for LoadLevel which sets a fileName
+        //and creates a FileInfo object. It checks if levels exists,
+        //and if it does a new StreamReader is created. While the
+        //created line is not null, it reads data from the file.
+        //If the data is [/], active is set to true.
         public override void LoadLevel()
         {
             string filename = "Levels.txt";
@@ -49,6 +58,7 @@ namespace Avert
 
         }
 
+        //Method for drawing the image
         public override void Draw(SpriteBatch spriteBatch)
         {
 

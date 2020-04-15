@@ -28,7 +28,6 @@ namespace Avert
 
         //Making the various fields, each representing
         //various elements used in the game.
-        SpriteFont gameFont;
         Texture2D imageTexture;
         private Vector2 imageLocation;
         private Rectangle imageRectangle;
@@ -40,7 +39,6 @@ namespace Avert
 
 
         private SpriteFont mainFont;
-        private SpriteFont controlFont;
         private Texture2D mirrorTexture;
         private Texture2D gridTexture;
         private Texture2D redBox; //Fields for fonts and images
@@ -80,6 +78,7 @@ namespace Avert
         double timer = 10.000;
         const double Time = 10.000;
 
+        //Fields for the created objects
         private Mirror mirror;
         private MoveableShape moveableShape;
         private Wall walls;
@@ -110,13 +109,14 @@ namespace Avert
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            //Initializing all of the needed fields for the Game1 class
             previousKeyboardState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
             currentState = GameStates.Menu;
             imageRectangle = new Rectangle(405, 505, 50, 50);
-            controlRectangle = new Rectangle(40, 330, 130, 50);
-            levelRectangle = new Rectangle(340, 330, 130, 50);
-            gameRectangle = new Rectangle(180, 330, 130, 50);
+            controlRectangle = new Rectangle(40, 330, 175, 50);
+            levelRectangle = new Rectangle(340, 330, 130, 60);
+            gameRectangle = new Rectangle(50, 330, 130, 50);
             titleRectangle = new Rectangle(100, 100, 320, 180);
             isDragAndDropping = false;
             this.IsMouseVisible = true;
@@ -278,6 +278,7 @@ namespace Avert
             mainFont = Content.Load<SpriteFont>("ControlText");
 
             // TODO: use this.Content to load your game content here
+            //Loading all of the fonts and images used in the game
             laser = Content.Load<Texture2D>("textures/laser/laser");
             mirrorTexture = Content.Load<Texture2D>("textures/objects/mirror");
             background = Content.Load<Texture2D>("textures/Backgrounds/background_blue");
@@ -362,31 +363,31 @@ namespace Avert
                     spriteBatch.Draw(title, titleRectangle, Color.White);
                     spriteBatch.Draw(redBox, controlRectangle, Color.White);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Control", new Vector2(50f,350f), Color.White);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f,350f),Color.White);
+                    spriteBatch.DrawString(mainFont, "(C)ontrols", new Vector2(50f,350f), Color.White);
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f,350f),Color.White);
                     
                     break;
 
                 case GameStates.Control:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Control", new Vector2(200f, 100f), Color.White);
-                    spriteBatch.DrawString(mainFont,"Click and drag the objects with the mouse,\n" +
-                        " shoot the laser with the space bar, and \n" +
-                        "hit the target to clear the level!",new Vector2(50f,200f),Color.White);
+                    spriteBatch.DrawString(mainFont, "Controls", new Vector2(200f, 100f), Color.White);
+                    spriteBatch.DrawString(mainFont,"Click and drag the objects with\n the mouse," +
+                        " shoot the laser \n with the space bar, and" +
+                        " hit \n the target to clear the level!",new Vector2(0f,200f),Color.White);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.White);
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.White);
                     spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f,350f), Color.White);
+                    spriteBatch.DrawString(mainFont, "Start \n (press enter)", new Vector2(80f ,350f), Color.White);
 
                     break;
 
                 case GameStates.Select:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(200f, 100f), Color.White);
+                    spriteBatch.DrawString(mainFont, "Level select", new Vector2(150f, 100f), Color.White);
                     spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Game", new Vector2(200f, 350f), Color.White);
+                    spriteBatch.DrawString(mainFont, "Start \n (press space)", new Vector2(50f, 350f), Color.White);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.White);
+                    spriteBatch.DrawString(mainFont, "(L)evel", new Vector2(350f, 350f), Color.White);
                     break;
 
                 case GameStates.Stage:
@@ -410,23 +411,23 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, "FAILED!", new Vector2(100f, 100f), Color.Red);
                     spriteBatch.DrawString(mainFont, "Score: ", new Vector2(100f, 200f), Color.Red);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "(L)evel select", new Vector2(350f, 350f), Color.Red);
                     if (life > 0) 
                     {
                         spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        spriteBatch.DrawString(mainFont, "Restart", new Vector2(190f, 350f), Color.Red);
+                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(190f, 350f), Color.Red);
                     }
                     break;
                 case GameStates.Wins:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Win!", new Vector2(100f, 100f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "You win!", new Vector2(100f, 100f), Color.Red);
                     spriteBatch.DrawString(mainFont, "Score: 10", new Vector2(100f, 200f), Color.Red);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Level", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "(L)evel select", new Vector2(350f, 350f), Color.Red);
                     if (life > 0)
                     {
                         spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        spriteBatch.DrawString(mainFont, "Restart", new Vector2(190f, 350f), Color.Red);
+                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(190f, 350f), Color.Red);
                     }
                     break;
             }
