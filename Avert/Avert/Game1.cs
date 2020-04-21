@@ -116,7 +116,7 @@ namespace Avert
             imageRectangle = new Rectangle(405, 505, 50, 50);
             controlRectangle = new Rectangle(40, 330, 175, 50);
             levelRectangle = new Rectangle(340, 330, 130, 60);
-            gameRectangle = new Rectangle(50, 330, 130, 50);
+            gameRectangle = new Rectangle(50, 330, 255, 60);
             titleRectangle = new Rectangle(100, 100, 320, 180);
             isDragAndDropping = false;
             this.IsMouseVisible = true;
@@ -377,7 +377,7 @@ namespace Avert
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.White);
                     spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Start \n (press enter)", new Vector2(80f ,350f), Color.White);
+                    spriteBatch.DrawString(mainFont, "Start \n (press space)", new Vector2(80f ,350f), Color.White);
 
                     break;
 
@@ -394,7 +394,7 @@ namespace Avert
                     //Drawing the grid
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Aquamarine);
-                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "life: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
+                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
                     if (mirror.Active == true)
                     {
                         mirror.Draw(spriteBatch);
@@ -411,11 +411,11 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, "FAILED!", new Vector2(100f, 100f), Color.Red);
                     spriteBatch.DrawString(mainFont, "Score: ", new Vector2(100f, 200f), Color.Red);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "(L)evel select", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.Red);
                     if (life > 0) 
                     {
                         spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(190f, 350f), Color.Red);
+                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(50, 350f), Color.Red);
                     }
                     break;
                 case GameStates.Wins:
@@ -423,11 +423,11 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, "You win!", new Vector2(100f, 100f), Color.Red);
                     spriteBatch.DrawString(mainFont, "Score: 10", new Vector2(100f, 200f), Color.Red);
                     spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "(L)evel select", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.Red);
                     if (life > 0)
                     {
                         spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(190f, 350f), Color.Red);
+                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(70f, 350f), Color.Red);
                     }
                     break;
             }
