@@ -135,6 +135,30 @@
 /processorParam:TextureFormat=Color
 /build:textures/gui/menu_button.png
 
+#begin textures/gui/menu_button_red.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui/menu_button_red.png
+
+#begin textures/gui/menu_button_red_selected.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui/menu_button_red_selected.png
+
 #begin textures/gui/menu_button_selected.png
 /importer:TextureImporter
 /processor:TextureProcessor

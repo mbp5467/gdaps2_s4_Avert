@@ -41,7 +41,7 @@ namespace Avert
         private SpriteFont mainFont;
         private Texture2D mirrorTexture;
         private Texture2D gridTexture;
-        private Texture2D redBox; //Fields for fonts and images
+        private Texture2D box; //Fields for fonts and images
         private Texture2D boxSelected;
         private Texture2D title;
         private Texture2D background;
@@ -52,6 +52,8 @@ namespace Avert
         private Texture2D target;
         private Texture2D targetFilled;
         private Texture2D laser;
+        private Texture2D boxRed;
+        private Texture2D boxRedSelected;
 
 
         const float XBOUNDARY = 600f;
@@ -318,8 +320,10 @@ namespace Avert
             target = Content.Load<Texture2D>("textures/objects/target_empty");
             targetFilled = Content.Load<Texture2D>("textures/objects/target_filled");
             gridTexture = Content.Load<Texture2D>("textures/Backgrounds/gridlines");
-            redBox = Content.Load<Texture2D>("textures/gui/menu_button"); //Soon to be replaced with drawings
+            box = Content.Load<Texture2D>("textures/gui/menu_button"); //Soon to be replaced with drawings
             boxSelected = Content.Load<Texture2D>("textures/gui/menu_button_selected");
+            boxRed = Content.Load<Texture2D>("textures/gui/menu_button_red");
+            boxRedSelected = Content.Load<Texture2D>("textures/gui/menu_button_red_selected");
             title = Content.Load<Texture2D>("textures/gui/title");
 
             mirror = new Mirror(mirrorTexture, imageRectangle);
@@ -374,6 +378,19 @@ namespace Avert
             base.Update(gameTime);
         }
 
+        //Draws box based on if mouse is hovering over given rectangle or not
+        private void DrawHoveringBoxes(Texture2D hovering, Texture2D notHovering, Rectangle Rect)
+        {
+            if (IsHovering(Mouse.GetState(), Rect))
+            {
+                spriteBatch.Draw(hovering, Rect, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(notHovering, Rect, Color.White);
+            }
+        }
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -394,22 +411,8 @@ namespace Avert
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     spriteBatch.Draw(title, titleRectangle, Color.White);
-                    if(IsHovering(Mouse.GetState(), controlRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, controlRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, controlRectangle, Color.White);
-                    }
-                    if (IsHovering(Mouse.GetState(), levelRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    }
+                    DrawHoveringBoxes(boxSelected, box, controlRectangle);
+                    DrawHoveringBoxes(boxSelected, box, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(C)ontrols", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70),Color.White);
                     spriteBatch.DrawString(mainFont, "Press F1 to toggle fullscreen", new Vector2(graphics.PreferredBackBufferWidth / 2 - 220, graphics.PreferredBackBufferHeight - 50), Color.White);
@@ -423,23 +426,9 @@ namespace Avert
                     spriteBatch.DrawString(mainFont,"Click and drag the objects with\n the mouse," +
                         " shoot the laser \n with the space bar, and" +
                         " hit \n the target to clear the level!",new Vector2(0f,200f),Color.White);
-                    if (IsHovering(Mouse.GetState(), levelRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    }
+                    DrawHoveringBoxes(boxSelected, box, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.White);
-                    if (IsHovering(Mouse.GetState(), gameRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    }
+                    DrawHoveringBoxes(boxSelected, box, gameRectangle);
                     spriteBatch.DrawString(mainFont, "Start \n (press space)", new Vector2(80f ,350f), Color.White);
 
                     break;
@@ -448,23 +437,9 @@ namespace Avert
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     spriteBatch.DrawString(mainFont, "Level select", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.White);
-                    if (IsHovering(Mouse.GetState(), gameRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    }   
+                    DrawHoveringBoxes(boxSelected, box, gameRectangle);
                     spriteBatch.DrawString(mainFont, "Start \n (press space)", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
-                    if (IsHovering(Mouse.GetState(), levelRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    }  
+                    DrawHoveringBoxes(boxSelected, box, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     break;
 
@@ -491,25 +466,11 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, "FAILED!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.Red);
                     spriteBatch.DrawString(mainFont, "Score: ", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.Red);
 
-                    if (IsHovering(Mouse.GetState(), levelRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    }
+                    DrawHoveringBoxes(boxSelected, box, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70), Color.Red);
                     if (life > 0) 
                     {
-                        if (IsHovering(Mouse.GetState(), gameRectangle))
-                        {
-                            spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
-                        }
-                        else
-                        {
-                            spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        }
+                        DrawHoveringBoxes(boxSelected, box, gameRectangle);
                         spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.Red);
                     }
                     break;
@@ -518,25 +479,11 @@ namespace Avert
                     spriteBatch.Draw(backgroundRed, new Vector2(0f, 0f), Color.White);
                     spriteBatch.DrawString(mainFont, "You win!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.White);
                     spriteBatch.DrawString(mainFont, "Score: 10", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.White);
-                    if (IsHovering(Mouse.GetState(), levelRectangle))
-                    {
-                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    }
+                    DrawHoveringBoxes(boxRedSelected, boxRed, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     if (life > 0)
                     {
-                        if (IsHovering(Mouse.GetState(), gameRectangle))
-                        {
-                            spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
-                        }
-                        else
-                        {
-                            spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        }
+                        DrawHoveringBoxes(boxRedSelected, boxRed, gameRectangle);
                         spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     }
                     break;
