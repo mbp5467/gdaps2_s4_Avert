@@ -412,7 +412,7 @@ namespace Avert
                     }
                     spriteBatch.DrawString(mainFont, "(C)ontrols", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70),Color.White);
-                    spriteBatch.DrawString(mainFont, "Press F1 to toggle full screen", new Vector2(graphics.PreferredBackBufferWidth / 2 - 220, graphics.PreferredBackBufferHeight - 50), Color.White);
+                    spriteBatch.DrawString(mainFont, "Press F1 to toggle fullscreen", new Vector2(graphics.PreferredBackBufferWidth / 2 - 220, graphics.PreferredBackBufferHeight - 50), Color.White);
 
                     break;
 
