@@ -328,6 +328,8 @@ namespace Avert
                     imageRectangle.Height = setup.ShapeSize();
                     mirror.LoadLevel();
                     walls.LoadLevel();
+                    lasers.LoadLevel();
+                    targets.LoadLevel();
                     loadLevel = true;
                 }
                 mirror.Update(gameTime);

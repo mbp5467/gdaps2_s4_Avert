@@ -62,9 +62,23 @@ namespace Avert
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (active == true)
+            {
 
-            location = new Rectangle(1 * game.tileSize, 1 * game.tileSize, game.ShapeSize(), game.ShapeSize());
-            spriteBatch.Draw(texture, location, Color.White);
+                for (int i = 0; i < game.gridSize_W; i++)
+                {
+                    for (int j = 0; j < game.gridSize_H; j++)
+                    {
+                        int coordinate = (j + 1) * game.gridSize_W + i;
+                        if (data[coordinate] == "1")
+                        {
+                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, location, Color.White);
+                        }
+                    }
+                }
+
+            }
         }
     }
     
