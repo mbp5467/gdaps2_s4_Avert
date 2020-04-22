@@ -208,6 +208,7 @@ namespace Level_Editor
                 }
                 MessageBox.Show(errorMessage, "Error");
             }
+
             else
             {
                 //KEY:
@@ -218,84 +219,93 @@ namespace Level_Editor
                 //- = wall
                 //This was made with the idea that we should use 
                 //multiple files for the levels so it's easier to load them in
-                string filename = "..\\..\\..\\..\\..\\Avert\\Avert\\Levels" + levelNumber.Text + ".txt";
-                FileInfo fileInfo = new FileInfo(filename);
-                if (fileInfo.Exists)
+                string filename = "..\\..\\..\\..\\..\\Avert\\Avert\\Levels.txt";
+
+                List<string> levelList = File.ReadAllLines(filename).ToList();
+                string levelToRemove = "";
+                foreach (string line in levelList)
                 {
-                    fileInfo.Delete();
+                    if (line.Contains("/," + levelNumber.Text))
+                    {
+                        levelToRemove = line;
+                    }
                 }
-                StreamWriter levelWriter = new StreamWriter(filename);
-                levelWriter.WriteLine("/," + levelNumber.Text + "," + x + "," + y + "," + mirrorsAllowed.Text);
+                levelList.Remove(levelToRemove);
+                File.WriteAllLines(filename, levelList.ToArray());
+
+                string levelWriter = "";
+                levelWriter = ("/," + levelNumber.Text + "," + x + "," + y + "," + mirrorsAllowed.Text + ",");
                 for (int i = 0; i < (x * y - 1); i++)
                 {
                     if (gridSpots[i].Text == "Laser")
                     {
-                        levelWriter.Write("1");
+                        levelWriter += "1";
                         if (directions[i].Text == "↑")
                         {
-                            levelWriter.Write("1");
+                            levelWriter += "1";
                         }
                         else if (directions[i].Text == "↓")
                         {
-                            levelWriter.Write("2");
+                            levelWriter += "2";
                         }
                         else if (directions[i].Text == "←")
                         {
-                            levelWriter.Write("3");
+                            levelWriter += "3";
                         }
                         else if (directions[i].Text == "→")
                         {
-                            levelWriter.Write("4");
+                            levelWriter += "4";
                         }
                     }
                     else if (gridSpots[i].Text == "Target")
                     {
-                        levelWriter.Write("9");
+                        levelWriter += "9";
                     }
                     else if (gridSpots[i].Text == "Wall")
                     {
-                        levelWriter.Write("-");
+                        levelWriter += "-";
                     }
                     else
                     {
-                        levelWriter.Write("0");
+                        levelWriter += "0";
                     }
-                    levelWriter.Write(",");
+                    levelWriter += ",";
                 }
 
                 if (gridSpots[x * y - 1].Text == "Laser")
                 {
-                    levelWriter.Write("1");
+                    levelWriter += "1";
                     if (directions[x * y - 1].Text == "↑")
                     {
-                        levelWriter.Write("1");
+                        levelWriter += "1";
                     }
                     else if (directions[x * y - 1].Text == "↓")
                     {
-                        levelWriter.Write("2");
+                        levelWriter += "2";
                     }
                     else if (directions[x * y - 1].Text == "←")
                     {
-                        levelWriter.Write("3");
+                        levelWriter += "3";
                     }
                     else if (directions[x * y - 1].Text == "→")
                     {
-                        levelWriter.Write("4");
+                        levelWriter += "4";
                     }
                 }
                 else if (gridSpots[x * y - 1].Text == "Target")
                 {
-                    levelWriter.Write("9");
+                    levelWriter += "9";
                 }
                 else if (gridSpots[x * y - 1].Text == "Wall")
                 {
-                    levelWriter.Write("-");
+                    levelWriter += "-";
                 }
                 else
                 {
-                    levelWriter.Write("0");
+                    levelWriter += "0";
                 }
-                levelWriter.Close();
+                levelList.Add(levelWriter);
+                File.WriteAllLines(filename, levelList.ToArray());
             }
         }
     }
