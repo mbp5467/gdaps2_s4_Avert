@@ -42,6 +42,7 @@ namespace Avert
         private Texture2D mirrorTexture;
         private Texture2D gridTexture;
         private Texture2D redBox; //Fields for fonts and images
+        private Texture2D boxSelected;
         private Texture2D title;
         private Texture2D background;
         private Texture2D backgroundRed;
@@ -53,8 +54,8 @@ namespace Avert
         private Texture2D laser;
 
 
-        const float xBoundary = 600f;
-        const float yBoundary = 600f;
+        const float XBOUNDARY = 600f;
+        const float YBOUNDARY = 600f;
         float xMovement;
         float yMovement; //Fields for the X/Y boundaries and movememnts
 
@@ -93,8 +94,9 @@ namespace Avert
             Content.RootDirectory = "Content";
 
             //Changing the width and height of the screen to 500x600
-            graphics.PreferredBackBufferWidth = 500;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
+            graphics.IsFullScreen = false;
             graphics.GraphicsProfile = GraphicsProfile.HiDef;
             graphics.ApplyChanges();
 
@@ -114,10 +116,10 @@ namespace Avert
             previousMouseState = Mouse.GetState();
             currentState = GameStates.Menu;
             imageRectangle = new Rectangle(405, 505, 50, 50);
-            controlRectangle = new Rectangle(40, 330, 175, 50);
-            levelRectangle = new Rectangle(340, 330, 130, 60);
-            gameRectangle = new Rectangle(50, 330, 255, 60);
-            titleRectangle = new Rectangle(100, 100, 320, 180);
+            controlRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 - 200, graphics.PreferredBackBufferHeight / 2 + 50, 175, 50);
+            levelRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 50, 130, 60);
+            gameRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 - 200, graphics.PreferredBackBufferHeight / 2 + 50, 255, 60);
+            titleRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 320) / 2, graphics.PreferredBackBufferHeight / 3, 320, 180);
             isDragAndDropping = false;
             this.IsMouseVisible = true;
             loadLevel = false;
@@ -127,12 +129,39 @@ namespace Avert
             lasers = new Laser(start);
             base.Initialize();
         }
-        
+
+        //Checks for single key press
+        private bool SingleKeyPress(Keys key, KeyboardState current)
+        {
+            if (current.IsKeyDown(key) && previousKeyboardState.IsKeyUp(key))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        //Checks if mouse is hovering over given rectangle
+        private bool IsHovering(MouseState msState, Rectangle Rect)
+        {
+            if (Rect.Contains(msState.X, msState.Y))
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void ProcessInput()
         {
             //Making the keyboard and mouse states to be used
             KeyboardState kbState = Keyboard.GetState();
             MouseState mState = Mouse.GetState();
+
+            //Toggles full screen mode
+            if (SingleKeyPress(Keys.F1, kbState))
+            {
+                graphics.ToggleFullScreen();
+            }
+
 
             //Switch statement for processing input, allowing the transitions between states.
             //Menu, Controls, Select and Failure allow keyboard inputs that can make the states switch
@@ -290,6 +319,7 @@ namespace Avert
             targetFilled = Content.Load<Texture2D>("textures/objects/target_filled");
             gridTexture = Content.Load<Texture2D>("textures/Backgrounds/gridlines");
             redBox = Content.Load<Texture2D>("textures/gui/menu_button"); //Soon to be replaced with drawings
+            boxSelected = Content.Load<Texture2D>("textures/gui/menu_button_selected");
             title = Content.Load<Texture2D>("textures/gui/title");
 
             mirror = new Mirror(mirrorTexture, imageRectangle);
@@ -360,38 +390,84 @@ namespace Avert
             {
                 case GameStates.Menu:
                     GraphicsDevice.Clear(Color.Black);
+                    spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     spriteBatch.Draw(title, titleRectangle, Color.White);
-                    spriteBatch.Draw(redBox, controlRectangle, Color.White);
-                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "(C)ontrols", new Vector2(50f,350f), Color.White);
-                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f,350f),Color.White);
+                    if(IsHovering(Mouse.GetState(), controlRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, controlRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, controlRectangle, Color.White);
+                    }
+                    if (IsHovering(Mouse.GetState(), levelRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    }
+                    spriteBatch.DrawString(mainFont, "(C)ontrols", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70),Color.White);
                     
                     break;
 
                 case GameStates.Control:
                     GraphicsDevice.Clear(Color.Black);
+                    spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     spriteBatch.DrawString(mainFont, "Controls", new Vector2(200f, 100f), Color.White);
                     spriteBatch.DrawString(mainFont,"Click and drag the objects with\n the mouse," +
                         " shoot the laser \n with the space bar, and" +
                         " hit \n the target to clear the level!",new Vector2(0f,200f),Color.White);
-                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    if (IsHovering(Mouse.GetState(), levelRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    }
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.White);
-                    spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                    if (IsHovering(Mouse.GetState(), gameRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                    }
                     spriteBatch.DrawString(mainFont, "Start \n (press space)", new Vector2(80f ,350f), Color.White);
 
                     break;
 
                 case GameStates.Select:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "Level select", new Vector2(150f, 100f), Color.White);
-                    spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "Start \n (press space)", new Vector2(50f, 350f), Color.White);
-                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "(L)evel", new Vector2(350f, 350f), Color.White);
+                    spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
+                    spriteBatch.DrawString(mainFont, "Level select", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.White);
+                    if (IsHovering(Mouse.GetState(), gameRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                    }   
+                    spriteBatch.DrawString(mainFont, "Start \n (press space)", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
+                    if (IsHovering(Mouse.GetState(), levelRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    }  
+                    spriteBatch.DrawString(mainFont, "(L)evel", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     break;
 
                 case GameStates.Stage:
                     //Drawing the grid
+                    spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Aquamarine);
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
@@ -408,26 +484,57 @@ namespace Avert
 
                 case GameStates.Failure:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "FAILED!", new Vector2(100f, 100f), Color.Red);
-                    spriteBatch.DrawString(mainFont, "Score: ", new Vector2(100f, 200f), Color.Red);
-                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
+                    spriteBatch.DrawString(mainFont, "FAILED!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Score: ", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.Red);
+
+                    if (IsHovering(Mouse.GetState(), levelRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    }
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70), Color.Red);
                     if (life > 0) 
                     {
-                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(50, 350f), Color.Red);
+                        if (IsHovering(Mouse.GetState(), gameRectangle))
+                        {
+                            spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                        }
+                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.Red);
                     }
                     break;
                 case GameStates.Wins:
                     GraphicsDevice.Clear(Color.Black);
-                    spriteBatch.DrawString(mainFont, "You win!", new Vector2(100f, 100f), Color.Red);
-                    spriteBatch.DrawString(mainFont, "Score: 10", new Vector2(100f, 200f), Color.Red);
-                    spriteBatch.Draw(redBox, levelRectangle, Color.White);
-                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(350f, 350f), Color.Red);
+                    spriteBatch.Draw(backgroundRed, new Vector2(0f, 0f), Color.White);
+                    spriteBatch.DrawString(mainFont, "You win!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.White);
+                    spriteBatch.DrawString(mainFont, "Score: 10", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.White);
+                    if (IsHovering(Mouse.GetState(), levelRectangle))
+                    {
+                        spriteBatch.Draw(boxSelected, levelRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(redBox, levelRectangle, Color.White);
+                    }
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select", new Vector2(graphics.PreferredBackBufferWidth / 2 + 70, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     if (life > 0)
                     {
-                        spriteBatch.Draw(redBox, gameRectangle, Color.White);
-                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(70f, 350f), Color.Red);
+                        if (IsHovering(Mouse.GetState(), gameRectangle))
+                        {
+                            spriteBatch.Draw(boxSelected, gameRectangle, Color.White);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(redBox, gameRectangle, Color.White);
+                        }
+                        spriteBatch.DrawString(mainFont, "(R)estart", new Vector2(graphics.PreferredBackBufferWidth / 2 - 190, graphics.PreferredBackBufferHeight / 2 + 70), Color.White);
                     }
                     break;
             }
