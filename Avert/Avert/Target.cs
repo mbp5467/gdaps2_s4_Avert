@@ -61,9 +61,22 @@ namespace Avert
         //Method for drawing the image
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (active == true)
+            {
+                for (int i = 0; i < game.gridSize_W; i++)
+                {
+                    for (int j = 0; j < game.gridSize_H; j++)
+                    {
+                        int coordinate = (j + 1) * game.gridSize_W + i;
+                        if (data[coordinate] == "9")
+                        {
+                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, location, Color.White);
+                        }
+                    }
+                }
 
-            location = new Rectangle(3 * game.tileSize, 3 * game.tileSize, game.ShapeSize(), game.ShapeSize());
-            spriteBatch.Draw(texture, location, Color.White);
+            }
         }
 
     }
