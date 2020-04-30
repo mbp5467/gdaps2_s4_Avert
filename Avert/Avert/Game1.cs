@@ -232,15 +232,12 @@ namespace Avert
                         life--;
                         currentState = GameStates.Failure;
                     }
-
-                    // 1 & 3
-                    if (mirror.Position.X >= setup.tileSize && mirror.Position.X <= (2* setup.tileSize) &&
-                        mirror.Position.Y >= (3*setup.tileSize) && mirror.Position.Y <= (4 * setup.tileSize)
-                        && (mState.LeftButton == ButtonState.Released))
+                    if ((mirror.Position.Intersects(start.Bounds) || mirror.Position.Intersects(target.Bounds) || mirror.Position.Intersects(wallBlue.Bounds))
+                        && (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released))
                     {
-                            currentState = GameStates.Wins;
+                        imageRectangle.X = 405;
+                        imageRectangle.Y = 505;
                     }
-
 
                    break;
 

@@ -21,6 +21,7 @@ namespace Avert
         private MouseState previousMouseState;
         private bool isDragAndDropping;
 
+        protected StableShape stableShape;
         // Store the position in rectagle for collision later
         // the postion could be changed due to the movement
         public Rectangle Position 
