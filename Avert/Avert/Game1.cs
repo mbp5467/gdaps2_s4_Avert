@@ -503,7 +503,7 @@ namespace Avert
                     if (life > 0) 
                     {
                         DrawHoveringBoxes(boxSelected, box, gameRectangle);
-                        spriteBatch.DrawString(mainFont, "(R)estart",
+                        spriteBatch.DrawString(mainFont, "Press Space to restart.",
                             new Vector2(graphics.PreferredBackBufferWidth / 2 - 95, graphics.PreferredBackBufferHeight / 2 + 300), Color.Red);
                     }
                     break;
