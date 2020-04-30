@@ -59,6 +59,7 @@ namespace Avert
                                  //as well as a GameStates enum
 
         bool loadLevel;
+        bool isLaserShoot;
 
         //Used to determine if the object is being dragged by the mouse.
 
@@ -76,6 +77,7 @@ namespace Avert
         private Wall walls;
         private Target targets;
         private Laser lasers;
+        private LaserBean laserBean;
          
         GameConfig setup = new GameConfig();
 
@@ -117,6 +119,7 @@ namespace Avert
             walls = new Wall(wallBlue);
             targets = new Target(target);
             lasers = new Laser(start);
+            laserBean = new LaserBean();
             base.Initialize();
         }
 
@@ -217,7 +220,8 @@ namespace Avert
                     break;
                
                 case GameStates.Stage:
-                    
+
+                    isLaserShoot = false;
                     //Restart the game
                     if (kbState.IsKeyDown(Keys.R))
                    {
@@ -231,13 +235,33 @@ namespace Avert
                         currentState = GameStates.Failure;
                     }
 
-                    // 1 & 3
+                    //shoot laser
+                    if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)) 
+                    {
+                        isLaserShoot = true;
+
+
+                        if (laserBean.Location.Intersects(mirror.Position)) 
+                        { 
+                            
+                        }
+                        if (laserBean.Location.Intersects(walls.Position)) 
+                        {
+                            currentState = GameStates.Failure;
+                        }
+                        if (laserBean.Location.Intersects(targets.Position)) 
+                        { 
+                            currentState = GameStates.Wins;
+                        }
+                    }
+
+                    /*
                     if (mirror.Position.X >= setup.tileSize && mirror.Position.X <= (2* setup.tileSize) &&
                         mirror.Position.Y >= (3*setup.tileSize) && mirror.Position.Y <= (4 * setup.tileSize)
                         && (mState.LeftButton == ButtonState.Released))
                     {
                             currentState = GameStates.Wins;
-                    }
+                    }*/
 
 
                    break;
@@ -326,6 +350,7 @@ namespace Avert
             boxRed = Content.Load<Texture2D>("textures/gui/menu_button_red");
             boxRedSelected = Content.Load<Texture2D>("textures/gui/menu_button_red_selected");
             title = Content.Load<Texture2D>("textures/gui/title");
+            
 
             mirror = new Mirror(mirrorTexture, imageRectangle);
             walls = new Wall(wallBlue);
@@ -488,6 +513,12 @@ namespace Avert
                     walls.Draw(spriteBatch);
                     targets.Draw(spriteBatch);
                     lasers.Draw(spriteBatch);
+
+                    //shoot laser
+                    if (isLaserShoot == true) 
+                    { 
+                        
+                    }
                     
                     break;
 
