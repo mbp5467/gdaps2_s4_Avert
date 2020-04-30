@@ -503,7 +503,7 @@ namespace Avert
                     if (life > 0) 
                     {
                         DrawHoveringBoxes(boxSelected, box, gameRectangle);
-                        spriteBatch.DrawString(mainFont, "Press Space to restart.",
+                        spriteBatch.DrawString(mainFont, "Rstart\n (press space)",
                             new Vector2(graphics.PreferredBackBufferWidth / 2 - 95, graphics.PreferredBackBufferHeight / 2 + 300), Color.Red);
                     }
                     break;
@@ -516,12 +516,7 @@ namespace Avert
                     DrawHoveringBoxes(boxRedSelected, boxRed, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select",
                     new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300), Color.White); 
-                    if (life > 0)
-                    {
-                        DrawHoveringBoxes(boxRedSelected, boxRed, gameRectangle);
-                        spriteBatch.DrawString(mainFont, "(R)estart",
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 95, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
-                    }
+                    
                     break;
             }
             spriteBatch.End();
