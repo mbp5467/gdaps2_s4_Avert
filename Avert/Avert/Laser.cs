@@ -15,10 +15,9 @@ namespace Avert
      * Laser is the start point of the game*/
     class Laser:StableShape
     {
-        //Fields for the laser class, bring a spriteBatch
-        //for the laser, a rectangle location, a data
-        //array for saving, and a new game object.
-        SpriteBatch spriteBatch;
+        //Fields for the laser class, being 
+        //a rectangle location, a data array for saving, 
+        //and a new game object.
         Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
@@ -58,7 +57,6 @@ namespace Avert
             }
 
         }
-
 
         public override void Draw(SpriteBatch spriteBatch)
         {
