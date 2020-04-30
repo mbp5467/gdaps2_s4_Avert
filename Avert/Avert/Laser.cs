@@ -70,16 +70,37 @@ namespace Avert
                     for (int j = 0; j < game.gridSize_H; j++)
                     {
                         int coordinate = (j + 1) * game.gridSize_W + i;
-                        if (data[coordinate] == "1")
+                        if (data[coordinate] == "11" || data[coordinate] == "12" || data[coordinate] == "13" || data[coordinate] == "14")
                         {
                             location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                            spriteBatch.Draw(texture, location, Color.White);
+                            if (data[coordinate] == "11")
+                            {
+                                spriteBatch.Draw(texture, location, Color.White);
+                            }
+                            else if (data[coordinate] == "12")
+                            {
+                                float angle = (float)Math.PI;  // 180 degrees
+                                spriteBatch.Draw(texture, new Vector2(location.X, location.Y), location, Color.White, angle, new Vector2(location.X, location.Y), 1, SpriteEffects.None, 0);
+                            }
+                            /*
+                            else if (data[coordinate] == "13")
+                            {
+                                float angle = (float)Math.PI;  // 180 degrees
+                                double scale = 1.0f;
+                                spriteBatch.Draw(texture, new Vector2(location.X, location.Y), location, Color.White, angle, new Vector2(location.X + (location.Width) / 2, location.Y + (location.Height / 2)), SpriteEffects.None, 0.0f);
+                            }
+                            else if (data[coordinate] == "14")
+                            {
+                                float angle = (float)Math.PI * (3/2);  // 270 degrees
+                                double scale = 1.0f;
+                                spriteBatch.Draw(texture, new Vector2(location.X, location.Y), location, Color.White, angle, new Vector2(location.X + (location.Width) / 2, location.Y + (location.Height / 2)), scale, SpriteEffects.None, 0.0f);
+                            }
+                            */
                         }
+
                     }
                 }
-
             }
         }
     }
-    
 }

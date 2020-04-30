@@ -164,6 +164,9 @@ namespace Avert
                 graphics.ToggleFullScreen();
             }
 
+            //Exits the game
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
 
             //Switch statement for processing input, allowing the transitions between states.
             //Menu, Controls, Select and Failure allow keyboard inputs that can make the states switch
@@ -242,7 +245,8 @@ namespace Avert
 
                     // 1 & 3
                     if (mirror.Position.X >= setup.tileSize && mirror.Position.X <= (2* setup.tileSize) &&
-                        mirror.Position.Y >= (3*setup.tileSize) && mirror.Position.Y <= (4 * setup.tileSize))
+                        mirror.Position.Y >= (3*setup.tileSize) && mirror.Position.Y <= (4 * setup.tileSize)
+                        && (mState.LeftButton == ButtonState.Released))
                     {
                             currentState = GameStates.Wins;
                     }
@@ -349,7 +353,6 @@ namespace Avert
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-
             // TODO: Add your update logic here
             // timer system
             if (currentState == GameStates.Stage)
