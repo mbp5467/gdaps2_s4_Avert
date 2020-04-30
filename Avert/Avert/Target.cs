@@ -68,7 +68,7 @@ namespace Avert
                         int coordinate = (j + 1) * game.gridSize_W + i;
                         if (game.data[coordinate] == "9")
                         {
-                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            location = new Rectangle(i * game.tileSize + 5, j * game.tileSize + 5, game.ShapeSize(), game.ShapeSize());
                             spriteBatch.Draw(texture, location, Color.White);
                         }
                     }
