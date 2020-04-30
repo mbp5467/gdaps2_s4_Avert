@@ -52,6 +52,8 @@ namespace Avert
         private Texture2D laser;
         private Texture2D boxRed;
         private Texture2D boxRedSelected;
+        private Texture2D rotateCW;
+        private Texture2D rotateCCW;
 
         KeyboardState previousKeyboardState;
         MouseState previousMouseState;
@@ -350,7 +352,8 @@ namespace Avert
             boxRed = Content.Load<Texture2D>("textures/gui/menu_button_red");
             boxRedSelected = Content.Load<Texture2D>("textures/gui/menu_button_red_selected");
             title = Content.Load<Texture2D>("textures/gui/title");
-            
+            rotateCW = Content.Load<Texture2D>("textures/gui/rotateCW");
+            rotateCCW = Content.Load<Texture2D>("textures/gui/rotateCCW");
 
             mirror = new Mirror(mirrorTexture, imageRectangle);
             walls = new Wall(wallBlue);
@@ -502,6 +505,8 @@ namespace Avert
                 case GameStates.Stage:
                     //Drawing the grid
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
+                    spriteBatch.Draw(rotateCCW, new Vector2(200f, 500f), Color.White);
+                    spriteBatch.Draw(rotateCW, new Vector2(300f, 500f), Color.White);
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Aquamarine);
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
