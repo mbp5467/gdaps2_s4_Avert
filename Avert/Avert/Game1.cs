@@ -66,8 +66,8 @@ namespace Avert
         int life = 5;
         const int Total_Life = 5;
 
-        //timer is set to the constant
-        //time and is subtracted from during the levels
+        //timer is set to the constant time
+        //and is subtracted from during the levels
         double timer = 10.000;
         const double Time = 10.000;
 
