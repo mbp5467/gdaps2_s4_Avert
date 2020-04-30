@@ -16,6 +16,8 @@ namespace Avert
         int windowWidth = 500;
         int windowHeight = 600;
 
+        public string[] data { get; set; }
+
         public void LoadLevel()
         {
             string filename = "Levels.txt";
@@ -26,7 +28,7 @@ namespace Avert
                 string line = null;
                 while ((line = levelReader.ReadLine()) != null)
                 {
-                    string[] data = line.Split(',');
+                    data = line.Split(',');
                     if (data[0] == "/" && data[1] == level.ToString())
                     {
                         gridSize_W = int.Parse(data[2]);
