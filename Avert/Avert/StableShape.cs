@@ -8,8 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Avert
 {
-    /*This class is the parent class for pre-position shape
-     */
+    //This class is the parent class for pre-position shape
+
     abstract class StableShape
     {
         //Field & properties
@@ -46,8 +46,6 @@ namespace Avert
         }
 
         //Load the position of stableShape in each level
-        public abstract void LoadLevel();
-
-        
+        public abstract void LoadLevel(); 
     }
 }

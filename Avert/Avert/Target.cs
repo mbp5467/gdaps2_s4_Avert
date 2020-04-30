@@ -8,16 +8,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-
 namespace Avert
 {
-    /* This is child class of stable shape
-     * Target is the ending point of the game*/
+    /* This is child class of stable shape.
+     * Target is the ending point of the game.*/
     class Target : StableShape
     {
-        //Creating the fields for the target, being the spriteBatch,
+        //Creating the fields for the target, being the rectangle location,
         //location, data array and a new Game object
-        SpriteBatch spriteBatch;
         Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
@@ -68,16 +66,14 @@ namespace Avert
                     for (int j = 0; j < game.gridSize_H; j++)
                     {
                         int coordinate = (j + 1) * game.gridSize_W + i;
-                        if (data[coordinate] == "9")
+                        if (game.data[coordinate] == "9")
                         {
                             location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
                             spriteBatch.Draw(texture, location, Color.White);
                         }
                     }
                 }
-
             }
         }
-
     }
 }

@@ -14,7 +14,8 @@ namespace Avert
         public int gridSize_H { get; set; }
         public int tileSize { get; set; }
         int windowWidth = 500;
-        int windowHeight = 600;
+
+        public string[] data { get; set; }
 
         public void LoadLevel()
         {
@@ -26,7 +27,7 @@ namespace Avert
                 string line = null;
                 while ((line = levelReader.ReadLine()) != null)
                 {
-                    string[] data = line.Split(',');
+                    data = line.Split(',');
                     if (data[0] == "/" && data[1] == level.ToString())
                     {
                         gridSize_W = int.Parse(data[2]);
@@ -45,8 +46,6 @@ namespace Avert
         //Draw the grid
         public void Draw(SpriteBatch spritebatch,Texture2D gridTexture) 
         {
-            /* 
-             */
             for (int i = 0; i < gridSize_W; i++) 
             {
                 for (int j = 0; j < gridSize_H; j++) 
@@ -76,7 +75,6 @@ namespace Avert
         public int ShapeSize()
         {
             return windowWidth / gridSize_W - 10;
-        }
-        
+        } 
     }
 }

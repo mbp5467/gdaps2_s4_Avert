@@ -9,12 +9,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Avert
 {
-    /* This class is the user control shape's parent class
-     * 
-     */
+    // This class is the user control shape's parent class
+
     abstract class MoveableShape
     {
-        //Field & properties
+        //Fields & properties
         protected Texture2D texture;
         protected Rectangle position;
         protected bool active = false;
@@ -99,7 +98,6 @@ namespace Avert
                 }
                 isDragAndDropping = false;
             }
-
             previousMouseState = mState;
         }
     }

@@ -14,10 +14,8 @@ namespace Avert
      * Wall will block the laser*/
     class Wall : StableShape
     {
-        //Fields for the wall, being a spriteBatch object,
-        //a rectangle for location, an array of strings, and 
-        //a new Game object
-        SpriteBatch spriteBatch;
+        //Fields for the wall, being a rectangle for location,
+        //an array of strings, and a new Game object
         Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
@@ -60,23 +58,20 @@ namespace Avert
         //Method for drawing the wall
         public override void Draw(SpriteBatch spriteBatch)
         {
-
             if (active == true)
             {
-
                 for (int i = 0; i < game.gridSize_W; i++) 
                 {
                     for (int j = 0; j < game.gridSize_H; j++) 
                     {
                         int coordinate = (j+1) * game.gridSize_W + i;
-                        if (data[coordinate] == "-") 
+                        if (game.data[coordinate] == "-") 
                         {
                             location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
                             spriteBatch.Draw(texture, location, Color.White);
                         }
                     }
                 }
-
             }
         }
     }
