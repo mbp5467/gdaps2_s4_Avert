@@ -315,6 +315,7 @@ namespace Avert
                         laserBeam.CurrentDirection = lasers.Direction;
                         isLaserShoot = true;
                         laserBeam.ShootLaser();
+                        timer = 1.500;
                     }
 
                     /*
