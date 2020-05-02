@@ -97,8 +97,8 @@ namespace Avert
                     if (mState.X >= gridSpot.X && mState.X < gridSpot.X + gridSpot.Width
                         && mState.Y >= gridSpot.Y && mState.Y < gridSpot.Y + gridSpot.Height)
                     {
-                        position.X = gridSpot.X + 5;
-                        position.Y = gridSpot.Y + 5;
+                        position.X = gridSpot.X;
+                        position.Y = gridSpot.Y;
                     }
                 }
                 isDragAndDropping = false;

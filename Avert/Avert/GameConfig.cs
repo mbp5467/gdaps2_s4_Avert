@@ -74,7 +74,7 @@ namespace Avert
         //Adjusts the size of the shapes according to the size of the grid
         public int ShapeSize()
         {
-            return windowWidth / gridSize_W - 10;
+            return windowWidth / gridSize_W;
         } 
     }
 }

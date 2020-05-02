@@ -17,6 +17,7 @@ namespace Avert
     {
         //New GameConfig for size of the shape
         GameConfig shapeSize = new GameConfig();
+        //1 = TopRight, 2 = BottomRight, 3 = BottomLeft, 4 = TopLeft
         int direction = 2;
 
         public int Direction

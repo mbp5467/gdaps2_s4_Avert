@@ -21,11 +21,18 @@ namespace Avert
         Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
+        //1 = up, 2 = down, 3 = left, 4 = right
         int direction = 1;
 
         public int Direction
         {
             get { return direction; }
+        }
+
+        public Rectangle Location
+        {
+            get { return location; }
+            set { location = value; }
         }
 
         //Paramaterized constructor that sets
@@ -76,7 +83,7 @@ namespace Avert
                         int coordinate = (j + 1) * game.gridSize_W + i;
                         if (data[coordinate] == "11" || data[coordinate] == "12" || data[coordinate] == "13" || data[coordinate] == "14")
                         {
-                            location = new Rectangle(i * game.tileSize + 5, j * game.tileSize + 5, game.ShapeSize(), game.ShapeSize());
+                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
                             if (data[coordinate] == "11")
                             {
                                 direction = 1;
