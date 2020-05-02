@@ -21,6 +21,12 @@ namespace Avert
         Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
+        int direction = 1;
+
+        public int Direction
+        {
+            get { return direction; }
+        }
 
         //Paramaterized constructor that sets
         //the position and calls the game's loadLevel method
@@ -71,6 +77,22 @@ namespace Avert
                         if (data[coordinate] == "11" || data[coordinate] == "12" || data[coordinate] == "13" || data[coordinate] == "14")
                         {
                             location = new Rectangle(i * game.tileSize + 5, j * game.tileSize + 5, game.ShapeSize(), game.ShapeSize());
+                            if (data[coordinate] == "11")
+                            {
+                                direction = 1;
+                            }
+                            else if (data[coordinate] == "12")
+                            {
+                                direction = 2;
+                            }
+                            else if (data[coordinate] == "13")
+                            {
+                                direction = 3;
+                            }
+                            else if (data[coordinate] == "14")
+                            {
+                                direction = 4;
+                            }
                             spriteBatch.Draw(texture, location, Color.White);
                         }
 

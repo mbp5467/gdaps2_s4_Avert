@@ -17,6 +17,13 @@ namespace Avert
     {
         //New GameConfig for size of the shape
         GameConfig shapeSize = new GameConfig();
+        int direction = 2;
+
+        public int Direction
+        {
+            get { return direction; }
+            set { direction = value; }
+        }
 
         //Parameterized constructor that sets active to false and calls
         //LoadLevel on the shapeSize

@@ -33,11 +33,14 @@ namespace Avert
         private Rectangle levelRectangle;
         private Rectangle gameRectangle; //Fields for the fonts, textures, and Vectors/Rectangles
         private Rectangle titleRectangle;
-       
-
+        private Rectangle rotateCWRectangle;
+        private Rectangle rotateCCWRectangle;
 
         private SpriteFont mainFont;
-        private Texture2D mirrorTexture;
+        private Texture2D mirrorTextureBR;
+        private Texture2D mirrorTextureBL;
+        private Texture2D mirrorTextureTL;
+        private Texture2D mirrorTextureTR;
         private Texture2D gridTexture;
         private Texture2D box; //Fields for fonts and images
         private Texture2D boxSelected;
@@ -46,7 +49,10 @@ namespace Avert
         private Texture2D backgroundRed;
         private Texture2D wallBlue;
         private Texture2D wallRed;
-        private Texture2D start;
+        private Texture2D startUp;
+        private Texture2D startDown;
+        private Texture2D startLeft;
+        private Texture2D startRight;
         private Texture2D target;
         private Texture2D targetFilled;
         private Texture2D laser;
@@ -79,7 +85,7 @@ namespace Avert
         private Wall walls;
         private Target targets;
         private Laser lasers;
-        private LaserBean laserBean;
+        private LaserBeam laserBeam;
          
         GameConfig setup = new GameConfig();
 
@@ -117,11 +123,10 @@ namespace Avert
             titleRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 320) / 2, graphics.PreferredBackBufferHeight / 3, 320, 180);
             IsMouseVisible = true;
             loadLevel = false;
-            mirror = new Mirror(mirrorTexture, imageRectangle);
+            mirror = new Mirror(mirrorTextureBR, imageRectangle);
             walls = new Wall(wallBlue);
             targets = new Target(target);
-            lasers = new Laser(start);
-            laserBean = new LaserBean();
+            laserBeam = new LaserBeam();
             base.Initialize();
         }
 
@@ -167,11 +172,11 @@ namespace Avert
 
             switch (currentState)
             {
-                  case GameStates.Menu:
+                case GameStates.Menu:
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                         && mState.Position.X > controlRectangle.X && mState.Position.X < (controlRectangle.X + controlRectangle.Width)
                         && mState.Position.Y > controlRectangle.Y && mState.Position.Y < (controlRectangle.Y + controlRectangle.Height)
-                        ||kbState.IsKeyDown(Keys.C))
+                        || kbState.IsKeyDown(Keys.C))
                     {
                         currentState = GameStates.Control;
                     }
@@ -184,12 +189,12 @@ namespace Avert
                     }
                     break;
 
-                 case GameStates.Control:
+                case GameStates.Control:
 
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                          && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
                          && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
-                         ||(kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
+                         || (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
                     {
                         currentState = GameStates.Stage;
                     }
@@ -214,45 +219,105 @@ namespace Avert
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                           && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
                           && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
-                          ||(kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
+                          || (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
                     {
                         life = Total_Life;
                         currentState = GameStates.Stage;
                     }
                     break;
-               
+
                 case GameStates.Stage:
 
                     isLaserShoot = false;
                     //Restart the game
                     if (kbState.IsKeyDown(Keys.R))
-                   {
+                    {
                         life--;
                         currentState = GameStates.Failure;
-                   }
+                    }
                     //Game over if your life is out or there's no time left
-                    if (life == 0 || timer <= 0) 
+                    if (life == 0 || timer <= 0)
                     {
                         life--;
                         currentState = GameStates.Failure;
                     }
 
+                    if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > rotateCWRectangle.X && mState.Position.X < (rotateCWRectangle.X + rotateCWRectangle.Width)
+                          && mState.Position.Y > rotateCWRectangle.Y && mState.Position.Y < (rotateCWRectangle.Y + rotateCWRectangle.Height))
+                    {
+                        if (mirror.Direction < 4)
+                        {
+                            mirror.Direction++;
+                        }
+                        else
+                        {
+                            mirror.Direction = 1;
+                        }
+                        if (mirror.Direction == 1)
+                        {
+                            mirror.Texture = mirrorTextureTR;
+                        }
+                        else if (mirror.Direction == 2)
+                        {
+                            mirror.Texture = mirrorTextureBR;
+                        }
+                        else if (mirror.Direction == 3)
+                        {
+                            mirror.Texture = mirrorTextureBL;
+                        }
+                        else if (mirror.Direction == 4)
+                        {
+                            mirror.Texture = mirrorTextureTL;
+                        }
+                    }
+                    if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > rotateCCWRectangle.X && mState.Position.X < (rotateCCWRectangle.X + rotateCCWRectangle.Width)
+                          && mState.Position.Y > rotateCCWRectangle.Y && mState.Position.Y < (rotateCCWRectangle.Y + rotateCCWRectangle.Height))
+                    {
+                        if (mirror.Direction > 1)
+                        {
+                            mirror.Direction--;
+                        }
+                        else
+                        {
+                            mirror.Direction = 4;
+                        }
+                        if (mirror.Direction == 1)
+                        {
+                            mirror.Texture = mirrorTextureTR;
+                        }
+                        else if (mirror.Direction == 2)
+                        {
+                            mirror.Texture = mirrorTextureBR;
+                        }
+                        else if (mirror.Direction == 3)
+                        {
+                            mirror.Texture = mirrorTextureBL;
+                        }
+                        else if (mirror.Direction == 4)
+                        {
+                            mirror.Texture = mirrorTextureTL;
+                        }
+                    }
+
                     //shoot laser
-                    if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)) 
+                    if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                     {
                         isLaserShoot = true;
-
-
-                        if (laserBean.Location.Intersects(mirror.Position)) 
-                        { 
-                            
+                        laserBeam.ShooterLocation = lasers.Position;
+                        laserBeam.ShooterDirection = lasers.Direction;
+                        laserBeam.ShootLaser();
+                        if (laserBeam.Location.Intersects(mirror.Position))
+                        {
+                            laserBeam.HitMirror(mirror.Direction);
                         }
-                        if (laserBean.Location.Intersects(walls.Position)) 
+                        if (laserBeam.Location.Intersects(walls.Position))
                         {
                             currentState = GameStates.Failure;
                         }
-                        if (laserBean.Location.Intersects(targets.Position)) 
-                        { 
+                        if (laserBeam.Location.Intersects(targets.Position))
+                        {
                             currentState = GameStates.Wins;
                         }
                     }
@@ -261,7 +326,8 @@ namespace Avert
                     if (mirror.Position.X >= setup.tileSize && mirror.Position.X <= (2* setup.tileSize) &&
                         mirror.Position.Y >= (3*setup.tileSize) && mirror.Position.Y <= (4 * setup.tileSize)
                         && (mState.LeftButton == ButtonState.Released))
-                    if ((mirror.Position.Intersects(start.Bounds) || mirror.Position.Intersects(target.Bounds) || mirror.Position.Intersects(wallBlue.Bounds))
+                        */
+                    if ((mirror.Position.Intersects(lasers.Position) || mirror.Position.Intersects(targets.Position) || mirror.Position.Intersects(walls.Position))
                         && (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released))
                     {
                         imageRectangle.X = 405;
@@ -340,12 +406,18 @@ namespace Avert
             // TODO: use this.Content to load your game content here
             //Loading all of the fonts and images used in the game
             laser = Content.Load<Texture2D>("textures/laser/laser");
-            mirrorTexture = Content.Load<Texture2D>("textures/objects/mirror");
+            mirrorTextureBR = Content.Load<Texture2D>("textures/objects/mirrorBR");
+            mirrorTextureBL = Content.Load<Texture2D>("textures/objects/mirrorBL");
+            mirrorTextureTL = Content.Load<Texture2D>("textures/objects/mirrorTL");
+            mirrorTextureTR = Content.Load<Texture2D>("textures/objects/mirror");
             background = Content.Load<Texture2D>("textures/Backgrounds/background_blue");
             backgroundRed = Content.Load<Texture2D>("textures/Backgrounds/background_red");//Background turns red when player beats the level.
             wallBlue = Content.Load<Texture2D>("textures/objects/wall_blue");
             wallRed = Content.Load<Texture2D>("textures/objects/wall_red");//wall turns red when player beats the level.
-            start = Content.Load<Texture2D>("textures/objects/blaster");
+            startUp = Content.Load<Texture2D>("textures/objects/blaster");
+            startDown = Content.Load<Texture2D>("textures/objects/blasterD");
+            startLeft = Content.Load<Texture2D>("textures/objects/blasterL");
+            startRight = Content.Load<Texture2D>("textures/objects/blasterR");
             target = Content.Load<Texture2D>("textures/objects/target_empty");
             targetFilled = Content.Load<Texture2D>("textures/objects/target_filled");
             gridTexture = Content.Load<Texture2D>("textures/Backgrounds/gridlines");
@@ -357,11 +429,10 @@ namespace Avert
             rotateCW = Content.Load<Texture2D>("textures/gui/rotateCW");
             rotateCCW = Content.Load<Texture2D>("textures/gui/rotateCCW");
 
-            mirror = new Mirror(mirrorTexture, imageRectangle);
+            mirror = new Mirror(mirrorTextureBR, imageRectangle);
             walls = new Wall(wallBlue);
             targets = new Target(target);
-            lasers = new Laser(start);
-
+            lasers = new Laser(startUp);
         }
 
         /// <summary>
@@ -387,12 +458,30 @@ namespace Avert
                 timer -= gameTime.ElapsedGameTime.TotalSeconds;
                 if (loadLevel == false)
                 {
+                    rotateCWRectangle = new Rectangle(300, 500, rotateCW.Width, rotateCW.Height);
+                    rotateCCWRectangle = new Rectangle(200, 500, rotateCCW.Width, rotateCCW.Height);
                     setup.LoadLevel();
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
                     mirror.LoadLevel();
                     walls.LoadLevel();
                     lasers.LoadLevel();
+                    if (lasers.Direction == 1)
+                    {
+                        lasers.Texture = startUp;
+                    }
+                    else if (lasers.Direction == 2)
+                    {
+                        lasers.Texture = startDown;
+                    }
+                    else if (lasers.Direction == 3)
+                    {
+                        lasers.Texture = startLeft;
+                    }
+                    else if (lasers.Direction == 4)
+                    {
+                        lasers.Texture = startRight;
+                    }
                     targets.LoadLevel();
                     loadLevel = true;
                 }
@@ -473,7 +562,7 @@ namespace Avert
                         new Vector2(graphics.PreferredBackBufferWidth / 2 - 95, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
 
                     //icon intro
-                    spriteBatch.Draw(start, new Rectangle(graphics.PreferredBackBufferWidth / 3, 300, 50, 50), Color.White);
+                    spriteBatch.Draw(startUp, new Rectangle(graphics.PreferredBackBufferWidth / 3, 300, 50, 50), Color.White);
                     spriteBatch.DrawString(mainFont, "This is the Laser." + "\n" + "\n" +
                         "This will shoot the laser in the direction it is facing.", new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 300), Color.White);
 
@@ -486,7 +575,7 @@ namespace Avert
                     spriteBatch.DrawString(mainFont, "This is the Wall.\n" + "\n" +
                         "This will block the laser and destroy", new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 525), Color.White);
 
-                    spriteBatch.Draw(mirrorTexture, new Rectangle(graphics.PreferredBackBufferWidth / 3, 650, 50, 50), Color.White);
+                    spriteBatch.Draw(mirrorTextureBR, new Rectangle(graphics.PreferredBackBufferWidth / 3, 650, 50, 50), Color.White);
                     spriteBatch.DrawString(mainFont, "This is the Mirror.\n" + "\n" +
                         "This will reflect the laser in another direction.", new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 650), Color.White);
                     break;
@@ -507,8 +596,22 @@ namespace Avert
                 case GameStates.Stage:
                     //Drawing the grid
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
-                    spriteBatch.Draw(rotateCCW, new Vector2(200f, 500f), Color.White);
-                    spriteBatch.Draw(rotateCW, new Vector2(300f, 500f), Color.White);
+                    if (IsHovering(Mouse.GetState(), rotateCCWRectangle))
+                    {
+                        spriteBatch.Draw(rotateCCW, rotateCCWRectangle, Color.Blue);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(rotateCCW, rotateCCWRectangle, Color.White);
+                    }
+                    if (IsHovering(Mouse.GetState(), rotateCWRectangle))
+                    {
+                        spriteBatch.Draw(rotateCW, rotateCWRectangle, Color.Blue);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(rotateCW, rotateCWRectangle, Color.White);
+                    }
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Aquamarine);
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(10f, 510f), Color.Black);

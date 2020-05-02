@@ -44,7 +44,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="GameConfig.cs" />
     <Compile Include="Laser.cs" />
-    <Compile Include="LaserBean.cs" />
+    <Compile Include="LaserBeam.cs" />
     <Compile Include="Mirror.cs" />
     <Compile Include="MoveableShape.cs" />
     <Compile Include="Program.cs" />

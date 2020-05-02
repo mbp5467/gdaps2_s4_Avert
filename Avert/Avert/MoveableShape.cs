@@ -37,6 +37,12 @@ namespace Avert
             set { active = value; }
         }
 
+        public Texture2D Texture
+        {
+            get { return texture; }
+            set { texture = value; }
+        }
+
         //Constructor
         protected MoveableShape(Texture2D texture, Rectangle position) 
         {
@@ -49,8 +55,6 @@ namespace Avert
         //Loads each movable shape
         public abstract void LoadLevel();
 
-
-        //Update the draw when laser hit
         public virtual void Draw(SpriteBatch spriteBatch) 
         {
             spriteBatch.Draw(texture, position, Color.White);

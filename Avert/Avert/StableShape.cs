@@ -33,6 +33,12 @@ namespace Avert
             set { active = value; }
         }
 
+        public Texture2D Texture
+        {
+            get { return texture; }
+            set { texture = value; }
+        }
+
         //Constuctor
         protected StableShape(Texture2D t)
         {
