@@ -16,7 +16,6 @@ namespace Avert
     {
         //Creating the fields for the target, being the rectangle location,
         //location, data array and a new Game object
-        Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
 
@@ -25,7 +24,6 @@ namespace Avert
         public Target(Texture2D t)
             : base(t)
         {
-            Position = location;
             game.LoadLevel();
         }
 
@@ -68,8 +66,8 @@ namespace Avert
                         int coordinate = (j + 1) * game.gridSize_W + i;
                         if (game.data[coordinate] == "9")
                         {
-                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                            spriteBatch.Draw(texture, location, Color.White);
+                            Position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, Position, Color.White);
                         }
                     }
                 }
