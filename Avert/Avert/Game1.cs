@@ -71,6 +71,7 @@ namespace Avert
 
         bool loadLevel;
         bool isLaserShoot;
+        bool laserAnimation;
         bool hitWall;
         bool hitTarget;
 
@@ -84,6 +85,8 @@ namespace Avert
         //and is subtracted from during the levels
         double timer = 10.000;
         const double Time = 10.000;
+        //Delays the changestate so players can see if they hit the target or not
+        double shootTimer = 1.500;
 
         //score system
         int score = 0;
@@ -206,6 +209,7 @@ namespace Avert
                          || (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
                     {
                         isLaserShoot = false;
+                        laserAnimation = false;
                         laserBeam.HitMirrorSide = false;
                         currentState = GameStates.Stage;
                     }
@@ -237,6 +241,7 @@ namespace Avert
                     {
                         life = Total_Life;
                         isLaserShoot = false;
+                        laserAnimation = false;
                         laserBeam.HitMirrorSide = false;
                         currentState = GameStates.Stage;
                     }
@@ -319,14 +324,18 @@ namespace Avert
                     //shoot laser
                     if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                     {
-                        //Initializes the location of the laser and its direction
-                        laserBeam.ShooterLocation = lasers.Location;
-                        laserBeam.Location = lasers.Location;
-                        laserBeam.ShooterDirection = lasers.Direction;
-                        laserBeam.CurrentDirection = lasers.Direction;
-                        isLaserShoot = true;
-                        laserBeam.ShootLaser();
-                        timer = 1.500;
+                        if (isLaserShoot == false)
+                        {
+                            //Initializes the location of the laser and its direction
+                            laserBeam.ShooterLocation = lasers.Location;
+                            laserBeam.Location = lasers.Location;
+                            laserBeam.ShooterDirection = lasers.Direction;
+                            laserBeam.CurrentDirection = lasers.Direction;
+                            isLaserShoot = true;
+                            laserAnimation = true;
+                            laserBeam.ShootLaser();
+                            shootTimer = 1.500;
+                        }
                     }
 
                     /*
@@ -366,7 +375,6 @@ namespace Avert
                                || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                         {
                             timer = Time; //Resets the timer
-
                             currentState = GameStates.Stage;
                         }
                     }
@@ -412,6 +420,7 @@ namespace Avert
             laserBeam.ShooterDirection = lasers.Direction;
             laserBeam.CurrentDirection = lasers.Direction;
             isLaserShoot = false;
+            laserAnimation = false;
             laserBeam.HitMirrorSide = false;
             walls.Texture = wallBlue;
             targets.Texture = target;
@@ -484,7 +493,14 @@ namespace Avert
             ProcessInput();
             if (currentState == GameStates.Stage)
             {
-                timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                if (isLaserShoot == false)
+                {
+                    timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else
+                {
+                    shootTimer -= gameTime.ElapsedGameTime.TotalSeconds;
+                }
                 if (loadLevel == false)
                 {
                     rotateCWRectangle = new Rectangle(300, 500, rotateCW.Width, rotateCW.Height);
@@ -533,35 +549,45 @@ namespace Avert
                 }
                 if (laserBeam.HitMirrorSide == true)
                 {
-                    isLaserShoot = false;
+                    laserAnimation = false;
                     life--;
-                    currentState = GameStates.Failure;
+                    if (shootTimer <= 0)
+                    {
+                        currentState = GameStates.Failure;
+                    }
                 }
-                // hit the wall go to fail
+                //Hits the wall, fails the level
                 if (laserBeam.Location.Intersects(walls.Position))
                 {
-                    isLaserShoot = false;
+                    laserAnimation = false;
                     walls.Texture = wallRed;
                     hitWall = true;
                     life--;
-                    currentState = GameStates.Failure;
-                    
+                    if (shootTimer <= 0)
+                    {
+                        currentState = GameStates.Failure;
+                    }
                 }
-                // hit target, go to win
+                //Hits the target, wins the level
                 if (laserBeam.Location.Intersects(targets.Position))
                 {
-                    isLaserShoot = false;
+                    laserAnimation = false;
                     targets.Texture = targetFilled;
                     hitTarget = true;
-                    currentState = GameStates.Wins;
-                    
+                    if (shootTimer <= 0)
+                    {
+                        currentState = GameStates.Wins;
+                    }
                 }
-                // out of boundry
-                if (laserBeam.Location.X < 0 || laserBeam.Location.Y < 0)
+                //Out of boundaries, fails the level
+                if (laserBeam.Location.X < 0 || laserBeam.Location.Y < 0 || laserBeam.Location.X > 500 || laserBeam.Location.Y > 500)
                 {
-                    isLaserShoot = false;
+                    laserAnimation = false;
                     life--;
-                    currentState = GameStates.Failure;
+                    if (shootTimer <= 0)
+                    {
+                        currentState = GameStates.Failure;
+                    }
                 }
                 mirror.Update(gameTime);
             }
@@ -705,7 +731,7 @@ namespace Avert
                         mirror.Draw(spriteBatch);
                     }
                     //Draws the laser
-                    if (isLaserShoot == true) 
+                    if (laserAnimation == true) 
                     {
                         spriteBatch.DrawString(mainFont, "Shoot the laser!", new Vector2(100, 600), Color.Red);
                         laserBeam.DrawLaser(spriteBatch);
