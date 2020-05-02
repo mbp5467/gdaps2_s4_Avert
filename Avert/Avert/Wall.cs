@@ -16,7 +16,6 @@ namespace Avert
     {
         //Fields for the wall, being a rectangle for location,
         //an array of strings, and a new Game object
-        Rectangle location;
         string[] data;
         GameConfig game = new GameConfig();
 
@@ -25,7 +24,6 @@ namespace Avert
         public Wall(Texture2D t)
             : base(t)
         {
-            Position = location;
             game.LoadLevel();
         }
 
@@ -67,8 +65,8 @@ namespace Avert
                         int coordinate = (j+1) * game.gridSize_W + i;
                         if (game.data[coordinate] == "-") 
                         {
-                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                            spriteBatch.Draw(texture, location, Color.White);
+                            Position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, Position, Color.White);
                         }
                     }
                 }

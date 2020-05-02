@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Avert
 {
@@ -35,6 +36,7 @@ namespace Avert
         private Rectangle titleRectangle;
         private Rectangle rotateCWRectangle;
         private Rectangle rotateCCWRectangle;
+        private Rectangle numberRectangle;
 
         private SpriteFont mainFont;
         private Texture2D mirrorTextureBR;
@@ -69,6 +71,8 @@ namespace Avert
 
         bool loadLevel;
         bool isLaserShoot;
+        bool hitWall;
+        bool hitTarget;
 
         //Used to determine if the object is being dragged by the mouse.
 
@@ -122,6 +126,7 @@ namespace Avert
             levelRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 + 200, graphics.PreferredBackBufferHeight / 2 +290, 130, 60);
             gameRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 - 100, graphics.PreferredBackBufferHeight / 2 +290, 255, 60);
             titleRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 320) / 2, graphics.PreferredBackBufferHeight / 3, 320, 180);
+            numberRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 300) / 2, graphics.PreferredBackBufferHeight / 3+50, 50, 50);
             IsMouseVisible = true;
             loadLevel = false;
             mirror = new Mirror(mirrorTextureBR, imageRectangle);
@@ -221,7 +226,10 @@ namespace Avert
                     }
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                           && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
-                          && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
+                          && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)|| 
+                          mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > numberRectangle.X && mState.Position.X < (numberRectangle.X + numberRectangle.Width)
+                          && mState.Position.Y > numberRectangle.Y && mState.Position.Y < (numberRectangle.Y + numberRectangle.Height)
                           || (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
                     {
                         life = Total_Life;
@@ -456,6 +464,7 @@ namespace Avert
         {
             // TODO: Add your update logic here
             // timer system
+            ProcessInput();
             if (currentState == GameStates.Stage)
             {
                 timer -= gameTime.ElapsedGameTime.TotalSeconds;
@@ -490,6 +499,7 @@ namespace Avert
                     targets.LoadLevel();
                     loadLevel = true;
                 }
+
                 //Collision statements for the laser. 
                 //Currently, only the mirror works for some reason.
                 if (laserBeam.Location.Intersects(mirror.Position))
@@ -507,17 +517,21 @@ namespace Avert
                 if (laserBeam.HitMirrorSide == true)
                 {
                     isLaserShoot = false;
+                    currentState = GameStates.Failure;
                 }
                 if (laserBeam.Location.Intersects(walls.Position))
                 {
                     isLaserShoot = false;
                     walls.Texture = wallRed;
+                    hitWall = true;
                     currentState = GameStates.Failure;
+                    
                 }
                 if (laserBeam.Location.Intersects(targets.Position))
                 {
                     isLaserShoot = false;
                     targets.Texture = targetFilled;
+                    hitTarget = true;
                     currentState = GameStates.Wins;
                 }
                 mirror.Update(gameTime);
@@ -527,7 +541,7 @@ namespace Avert
                 timer = 10.000;
                 loadLevel = false;
             }
-            ProcessInput();
+            
             
             base.Update(gameTime);
         }
@@ -626,6 +640,10 @@ namespace Avert
                     DrawHoveringBoxes(boxSelected, box, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select", 
                         new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
+
+                    DrawHoveringBoxes(boxSelected, box, numberRectangle);
+                   spriteBatch.DrawString(mainFont, "1",
+                       new Vector2(graphics.PreferredBackBufferWidth / 2 -130, graphics.PreferredBackBufferHeight / 3 + 65), Color.White);
                     break;
 
                 case GameStates.Stage:
@@ -660,9 +678,18 @@ namespace Avert
                     //Draws the laser
                     if (isLaserShoot == true) 
                     {
-                        //spriteBatch.Draw(laser, laserBean.Location, Color.White);
                         spriteBatch.DrawString(mainFont, "Shoot the laser!", new Vector2(100, 600), Color.Red);
                         laserBeam.DrawLaser(spriteBatch);
+                    }
+
+                    // trys to change the color when hit wall or target
+                    if (hitWall == true) 
+                    {
+                        walls.Draw(spriteBatch);
+                    }
+                    if (hitTarget == true) 
+                    {
+                        targets.Draw(spriteBatch);
                     }
 
                     break;

@@ -201,5 +201,7 @@ namespace Avert
                 location.X += game.ShapeSize();
             }
         }
+
+        
     }
 }
