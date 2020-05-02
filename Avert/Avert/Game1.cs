@@ -337,7 +337,8 @@ namespace Avert
                    break;
 
                 case GameStates.Failure:
-                   if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                    isLaserShoot = false;
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
                         || kbState.IsKeyDown(Keys.L))
@@ -364,7 +365,8 @@ namespace Avert
                    break;
 
                 case GameStates.Wins:
-                    if(mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                    isLaserShoot = false;
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
                         || kbState.IsKeyDown(Keys.L))
@@ -626,10 +628,12 @@ namespace Avert
 
                     //shoot laser
                     if (isLaserShoot == true) 
-                    { 
-                        
+                    {
+                        //spriteBatch.Draw(laser, laserBean.Location, Color.White);
+                        spriteBatch.DrawString(mainFont, "Shoot the Laser!", new Vector2(100, 600), Color.Red);
+
                     }
-                    
+
                     break;
 
                 case GameStates.Failure:
