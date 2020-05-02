@@ -85,6 +85,9 @@ namespace Avert
         double timer = 10.000;
         const double Time = 10.000;
 
+        //score system
+        int score = 0;
+
         //Fields for the created objects
         private Mirror mirror;
         private Wall walls;
@@ -340,7 +343,7 @@ namespace Avert
                    break;
 
                 case GameStates.Failure:
-                    isLaserShoot = false;
+                    Reset();
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
@@ -362,15 +365,16 @@ namespace Avert
                                || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                         {
                             timer = Time; //Resets the timer
-                            isLaserShoot = false;
-                            laserBeam.HitMirrorSide = false;
+
                             currentState = GameStates.Stage;
                         }
                     }
                    break;
 
                 case GameStates.Wins:
-                    isLaserShoot = false;
+
+                    Reset();
+                    score = 10;
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
@@ -385,8 +389,6 @@ namespace Avert
                                                   || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                     {
                         timer = Time; //Resets the timer
-                        isLaserShoot = false;
-                        laserBeam.HitMirrorSide = false;
                         currentState = GameStates.Stage;
                     }
 
@@ -399,6 +401,20 @@ namespace Avert
             }
             previousKeyboardState = kbState;
             previousMouseState = mState;
+        }
+
+        private void Reset() 
+        {
+            //reset everything to original poisiton and stage
+            laserBeam.ShooterLocation = lasers.Location;
+            laserBeam.Location = lasers.Location;
+            laserBeam.ShooterDirection = lasers.Direction;
+            laserBeam.CurrentDirection = lasers.Direction;
+            isLaserShoot = false;
+            laserBeam.HitMirrorSide = false;
+            walls.Texture = wallBlue;
+            targets.Texture = target;
+            mirror.Position = imageRectangle;
         }
 
         /// <summary>
@@ -517,22 +533,34 @@ namespace Avert
                 if (laserBeam.HitMirrorSide == true)
                 {
                     isLaserShoot = false;
+                    life--;
                     currentState = GameStates.Failure;
                 }
+                // hit the wall go to fail
                 if (laserBeam.Location.Intersects(walls.Position))
                 {
                     isLaserShoot = false;
                     walls.Texture = wallRed;
                     hitWall = true;
+                    life--;
                     currentState = GameStates.Failure;
                     
                 }
+                // hit target, go to win
                 if (laserBeam.Location.Intersects(targets.Position))
                 {
                     isLaserShoot = false;
                     targets.Texture = targetFilled;
                     hitTarget = true;
                     currentState = GameStates.Wins;
+                    
+                }
+                // out of boundry
+                if (laserBeam.Location.X < 0 || laserBeam.Location.Y < 0)
+                {
+                    isLaserShoot = false;
+                    life--;
+                    currentState = GameStates.Failure;
                 }
                 mirror.Update(gameTime);
             }
@@ -698,7 +726,7 @@ namespace Avert
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     spriteBatch.DrawString(mainFont, "FAILED!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.Red);
-                    spriteBatch.DrawString(mainFont, "Score: ", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Score: " + score.ToString(), new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.Red);
 
                     DrawHoveringBoxes(boxSelected, box, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select",
@@ -712,10 +740,11 @@ namespace Avert
                     break;
 
                 case GameStates.Wins:
+                    
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.Draw(backgroundRed, new Vector2(0f, 0f), Color.White);
                     spriteBatch.DrawString(mainFont, "You win!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.White);
-                    spriteBatch.DrawString(mainFont, "Score: 10", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.White);
+                    spriteBatch.DrawString(mainFont, "Score: " + score.ToString(), new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.White);
                     DrawHoveringBoxes(boxRedSelected, boxRed, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select",
                     new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300), Color.White); 
