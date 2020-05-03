@@ -38,6 +38,8 @@ namespace Avert
             //Clears the walls list first so drawn walls don't interfere with
             //other levels later on
             walls.Clear();
+            int x = (Game1.screenSize_W - game.windowWidth) / 2;
+            int y = (Game1.screenSize_H - game.windowWidth) / 2;
             for (int i = 0; i < game.gridSize_W; i++)
             {
 
@@ -46,7 +48,7 @@ namespace Avert
                     int coordinate = (j + 1) * game.gridSize_W + i;
                     if (game.data[coordinate] == "-")
                     {
-                        position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                        position = new Rectangle(x + i * game.tileSize, y + j * game.tileSize, game.ShapeSize(), game.ShapeSize());
                         walls.Add(position);
                         spriteBatch.Draw(texture, position, Color.White);
                     }

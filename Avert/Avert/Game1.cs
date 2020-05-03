@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Avert
 {
@@ -112,6 +114,8 @@ namespace Avert
         GameConfig setup;
         #endregion
 
+        public static int screenSize_W { get; set; } = 1920;
+        public static int screenSize_H { get; set; } = 1080;
         #region Constructor
         public Game1()
         {
@@ -119,8 +123,8 @@ namespace Avert
             Content.RootDirectory = "Content";
 
             //Changing the width and height of the screen to 1920 x 1080 (fullscreen)
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            graphics.PreferredBackBufferWidth = screenSize_W;
+            graphics.PreferredBackBufferHeight = screenSize_H;
             graphics.IsFullScreen = false;
             graphics.GraphicsProfile = GraphicsProfile.HiDef;
             graphics.ApplyChanges();
@@ -652,8 +656,11 @@ namespace Avert
                 //Loads in everything for each level
                 if (loadLevel == false)
                 {
-                    rotateCWRectangle = new Rectangle(300, 500, rotateCW.Width, rotateCW.Height);
-                    rotateCCWRectangle = new Rectangle(200, 500, rotateCCW.Width, rotateCCW.Height);
+                    int x = (screenSize_W - setup.windowWidth) / 2;
+                    int y = (screenSize_H - setup.windowWidth) / 2;
+
+                    rotateCWRectangle = new Rectangle(x + 300, y + 500, rotateCW.Width, rotateCW.Height);
+                    rotateCCWRectangle = new Rectangle(x + 200, y + 500, rotateCCW.Width, rotateCCW.Height);
                     setup.LoadLevel();
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
@@ -914,7 +921,11 @@ namespace Avert
                     {
                         spriteBatch.Draw(rotateCW, rotateCWRectangle, Color.White);
                     }
-                    //Draws all of the pieces
+                    setup.Draw(spriteBatch, gridTexture);
+                    GraphicsDevice.Clear(Color.Aquamarine);
+                    int x = (screenSize_W - setup.windowWidth) / 2;
+                    int y = (screenSize_H - setup.windowWidth) / 2;
+                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(x + 10f, y + 510f), Color.Black);
                     walls.Draw(spriteBatch);
                     targets.Draw(spriteBatch);
                     lasers.Draw(spriteBatch);

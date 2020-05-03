@@ -27,15 +27,20 @@ namespace Avert
         //Method for drawing the target
         public override void Draw(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < game.gridSize_W; i++)
+            int x = (Game1.screenSize_W - game.windowWidth) / 2;
+            int y = (Game1.screenSize_H - game.windowWidth) / 2;
+            if (active == true)
             {
-                for (int j = 0; j < game.gridSize_H; j++)
+                for (int i = 0; i < game.gridSize_W; i++)
                 {
-                    int coordinate = (j + 1) * game.gridSize_W + i;
-                    if (game.data[coordinate] == "9")
+                    for (int j = 0; j < game.gridSize_H; j++)
                     {
-                        position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                        spriteBatch.Draw(texture, position, Color.White);
+                        int coordinate = (j + 1) * game.gridSize_W + i;
+                        if (game.data[coordinate] == "9")
+                        {
+                            Position = new Rectangle(x + i * game.tileSize, y + j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            spriteBatch.Draw(texture, position, Color.White);
+                        }
                     }
                 }
             }

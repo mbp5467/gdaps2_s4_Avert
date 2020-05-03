@@ -35,33 +35,40 @@ namespace Avert
         //Method for drawing the image and getting the direction of the laser shooter
         public override void Draw(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < game.gridSize_W; i++)
-            {
-                for (int j = 0; j < game.gridSize_H; j++)
-                {
-                    int coordinate = (j + 1) * game.gridSize_W + i;
-                    if (game.data[coordinate] == "11" || game.data[coordinate] == "12" || game.data[coordinate] == "13" || game.data[coordinate] == "14")
-                    {
-                        if (game.data[coordinate] == "11")
-                        {
-                            direction = 1;
-                        }
-                        else if (game.data[coordinate] == "12")
-                        {
-                            direction = 2;
-                        }
-                        else if (game.data[coordinate] == "13")
-                        {
-                            direction = 3;
-                        }
-                        else if (game.data[coordinate] == "14")
-                        {
-                            direction = 4;
-                        }
-                        position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                        spriteBatch.Draw(texture, position, Color.White);
-                    }
+            int x = (Game1.screenSize_W - game.windowWidth) / 2;
+            int y = (Game1.screenSize_H - game.windowWidth) / 2;
 
+            if (active == true)
+            {
+
+                for (int i = 0; i < game.gridSize_W; i++)
+                {
+                    for (int j = 0; j < game.gridSize_H; j++)
+                    {
+                        int coordinate = (j + 1) * game.gridSize_W + i;
+                        if (data[coordinate] == "11" || data[coordinate] == "12" || data[coordinate] == "13" || data[coordinate] == "14")
+                        {
+                            position = new Rectangle(x + i * game.tileSize, y + j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            if (data[coordinate] == "11")
+                            {
+                                direction = 1;
+                            }
+                            else if (data[coordinate] == "12")
+                            {
+                                direction = 2;
+                            }
+                            else if (data[coordinate] == "13")
+                            {
+                                direction = 3;
+                            }
+                            else if (data[coordinate] == "14")
+                            {
+                                direction = 4;
+                            }
+                            spriteBatch.Draw(texture, position, Color.White);
+                        }
+
+                    }
                 }
             }
         }
