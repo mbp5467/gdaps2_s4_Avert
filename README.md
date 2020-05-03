@@ -44,7 +44,7 @@ The repository and branches are mainly being used to keep track of which tasks h
 | [Google Documentation](TBD) | https://docs.google.com/document/d/1nSW5v7hB6X4PuBVPtCtv6lNH2kY1LTXddgQnLUTfOec/edit?ts=5e3848da#heading=h.t0sfhbwed8te
 | [game/ReleaseNotes.md](src/ReleaseNotes.md) | MonoGame release notes _Update this with each milestone. ..Milestone 3 has a fully functional game. There are 5 levels, and the player can transition between them with user input. If they win, they go to a victory stage. Otherwise, they lost.
 | [external_tool/ReleaseNotes.md](src/ReleaseNotes.md) | External tool release notes _Update this with each milestone._..The external tool is used with a Windows UI program that saves to a .txt file based on what the user wants the levels to contain.
-..An issue with the external tool is the fact that it only allows a 5x5 grid to be saved and loaded. Anything else will crash the program. We wanted to have the levels be fully customizable, but time restraints prevented that.
+..An issue with the external tool is the fact that it only allows a 5x5 grid to be saved and loaded. Anything else will crash the program. We wanted to have the levels be fully customized by the user, but time restraints prevented that.
 
 ## Other Resources
 - [MonoGame Documentation](http://www.monogame.net/documentation/?page=main)
