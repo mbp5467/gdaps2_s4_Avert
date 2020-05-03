@@ -8,12 +8,14 @@ namespace Avert
     class GameConfig
     {
         int level = 1;
+
+
         //Set the grid size
         // the number can be changed depends on the level(future)
         public int gridSize_W { get; set; }
         public int gridSize_H { get; set; }
         public int tileSize { get; set; }
-        int windowWidth = 500;
+        public int windowWidth { get; set; } = 500;
 
         public string[] data { get; set; }
 
@@ -46,11 +48,14 @@ namespace Avert
         //Draw the grid
         public void Draw(SpriteBatch spritebatch,Texture2D gridTexture) 
         {
+            int x = (Game1.screenSize_W - windowWidth) / 2;
+            int y = (Game1.screenSize_H - windowWidth) / 2;
+
             for (int i = 0; i < gridSize_W; i++) 
             {
                 for (int j = 0; j < gridSize_H; j++) 
                 {
-                    gridPosition = new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize);
+                    gridPosition = new Rectangle(x + i * tileSize, y + j * tileSize, tileSize, tileSize);
                     spritebatch.Draw(gridTexture, gridPosition, Color.White);
                 }
             }
@@ -59,12 +64,15 @@ namespace Avert
         //Allows other classes to use the spots on the grid.
         public List<Rectangle> GridTiles()
         {
+            int x = (Game1.screenSize_W - windowWidth) / 2;
+            int y = (Game1.screenSize_H - windowWidth) / 2;
+
             List<Rectangle> spots = new List<Rectangle>();
             for (int i = 0; i < gridSize_W; i++)
             {
                 for (int j = 0; j < gridSize_H; j++)
                 {
-                    gridPosition = new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize);
+                    gridPosition = new Rectangle(x + i * tileSize, y + j * tileSize, tileSize, tileSize);
                     spots.Add(gridPosition);
                 }
             }

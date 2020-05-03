@@ -100,14 +100,16 @@ namespace Avert
          
         GameConfig setup = new GameConfig();
 
+        public static int screenSize_W { get; set; } = 1920;
+        public static int screenSize_H { get; set; } = 1080;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             //Changing the width and height of the screen to 500x600
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            graphics.PreferredBackBufferWidth = screenSize_W;
+            graphics.PreferredBackBufferHeight = screenSize_H;
             graphics.IsFullScreen = false;
             graphics.GraphicsProfile = GraphicsProfile.HiDef;
             graphics.ApplyChanges();
@@ -503,8 +505,11 @@ namespace Avert
                 }
                 if (loadLevel == false)
                 {
-                    rotateCWRectangle = new Rectangle(300, 500, rotateCW.Width, rotateCW.Height);
-                    rotateCCWRectangle = new Rectangle(200, 500, rotateCCW.Width, rotateCCW.Height);
+                    int x = (screenSize_W - setup.windowWidth) / 2;
+                    int y = (screenSize_H - setup.windowWidth) / 2;
+
+                    rotateCWRectangle = new Rectangle(x + 300, y + 500, rotateCW.Width, rotateCW.Height);
+                    rotateCCWRectangle = new Rectangle(x + 200, y + 500, rotateCCW.Width, rotateCCW.Height);
                     setup.LoadLevel();
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
@@ -722,7 +727,9 @@ namespace Avert
                     }
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Aquamarine);
-                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
+                    int x = (screenSize_W - setup.windowWidth) / 2;
+                    int y = (screenSize_H - setup.windowWidth) / 2;
+                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(x + 10f, y + 510f), Color.Black);
                     walls.Draw(spriteBatch);
                     targets.Draw(spriteBatch);
                     lasers.Draw(spriteBatch);

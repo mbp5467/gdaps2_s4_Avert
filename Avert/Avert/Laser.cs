@@ -73,6 +73,9 @@ namespace Avert
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            int x = (Game1.screenSize_W - game.windowWidth) / 2;
+            int y = (Game1.screenSize_H - game.windowWidth) / 2;
+
             if (active == true)
             {
 
@@ -83,7 +86,7 @@ namespace Avert
                         int coordinate = (j + 1) * game.gridSize_W + i;
                         if (data[coordinate] == "11" || data[coordinate] == "12" || data[coordinate] == "13" || data[coordinate] == "14")
                         {
-                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            location = new Rectangle(x + i * game.tileSize, y + j * game.tileSize, game.ShapeSize(), game.ShapeSize());
                             if (data[coordinate] == "11")
                             {
                                 direction = 1;

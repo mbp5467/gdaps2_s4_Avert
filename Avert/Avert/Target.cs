@@ -57,6 +57,8 @@ namespace Avert
         //Method for drawing the image
         public override void Draw(SpriteBatch spriteBatch)
         {
+            int x = (Game1.screenSize_W - game.windowWidth) / 2;
+            int y = (Game1.screenSize_H - game.windowWidth) / 2;
             if (active == true)
             {
                 for (int i = 0; i < game.gridSize_W; i++)
@@ -66,7 +68,7 @@ namespace Avert
                         int coordinate = (j + 1) * game.gridSize_W + i;
                         if (game.data[coordinate] == "9")
                         {
-                            Position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                            Position = new Rectangle(x + i * game.tileSize, y + j * game.tileSize, game.ShapeSize(), game.ShapeSize());
                             spriteBatch.Draw(texture, Position, Color.White);
                         }
                     }
