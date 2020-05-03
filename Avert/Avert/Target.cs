@@ -29,8 +29,6 @@ namespace Avert
         {
             int x = (Game1.screenSize_W - game.windowWidth) / 2;
             int y = (Game1.screenSize_H - game.windowWidth) / 2;
-            if (active == true)
-            {
                 for (int i = 0; i < game.gridSize_W; i++)
                 {
                     for (int j = 0; j < game.gridSize_H; j++)
@@ -43,7 +41,6 @@ namespace Avert
                         }
                     }
                 }
-            }
         }
     }
 }
