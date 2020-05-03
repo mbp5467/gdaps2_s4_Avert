@@ -125,7 +125,7 @@ namespace Avert
             //Changing the width and height of the screen to 1920 x 1080 (fullscreen)
             graphics.PreferredBackBufferWidth = screenSize_W;
             graphics.PreferredBackBufferHeight = screenSize_H;
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
             graphics.GraphicsProfile = GraphicsProfile.HiDef;
             graphics.ApplyChanges();
 
@@ -645,6 +645,7 @@ namespace Avert
             ProcessInput();
             if (currentState == GameStates.Stage)
             {
+                //centers stage based on the screen size and the size of the stage
                 int x = (screenSize_W - setup.windowWidth) / 2;
                 int y = (screenSize_H - setup.windowWidth) / 2;
 
@@ -657,8 +658,7 @@ namespace Avert
                 {
                     shootTimer -= gameTime.ElapsedGameTime.TotalSeconds;
                 }
-                int x = (screenSize_W - setup.windowWidth) / 2;
-                int y = (screenSize_H - setup.windowWidth) / 2;
+
                 //Loads in everything for each level
                 if (loadLevel == false)
                 {
@@ -930,6 +930,7 @@ namespace Avert
                     int y = (screenSize_H - setup.windowWidth) / 2;
                     spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" 
                         + "Health: "+life.ToString(), new Vector2(x + 10f, y + 510f), Color.Black);
+                    spriteBatch.DrawString(mainFont, "Press space to shoot the laser", new Vector2(x + 30f, y + 650f), Color.White);
                     walls.Draw(spriteBatch);
                     targets.Draw(spriteBatch);
                     lasers.Draw(spriteBatch);
