@@ -645,6 +645,9 @@ namespace Avert
             ProcessInput();
             if (currentState == GameStates.Stage)
             {
+                int x = (screenSize_W - setup.windowWidth) / 2;
+                int y = (screenSize_H - setup.windowWidth) / 2;
+
                 //Timer system
                 if (isLaserShoot == false)
                 {
@@ -725,7 +728,7 @@ namespace Avert
                 //Hits the target, wins the level
                 if (isLaserShoot == true && laserBeam.Location.Intersects(targets.Position))
                 {
-                    laserAnimation = false;
+                    laserAnimation = false ;
                     targets.Texture = targetFilled;
                     hitTarget = true;
                     if (shootTimer <= 0)
@@ -745,6 +748,7 @@ namespace Avert
                         currentState = GameStates.Failure;
                     }
                 }
+
                 //Used for drag/drop
                 mirror.Update(gameTime);
             }
@@ -902,6 +906,7 @@ namespace Avert
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Aquamarine);
+                   
                     //Draws the rotation buttons
                     if (IsHovering(Mouse.GetState(), rotateCCWRectangle))
                     {
