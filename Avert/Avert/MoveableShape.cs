@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -15,28 +10,11 @@ namespace Avert
     {
         //Fields & properties
         protected Texture2D texture;
+        // Store the position in rectangle for collision later
+        // the postion could be changed due to the movement
         protected Rectangle position;
-        protected bool active = false;
-
         private MouseState previousMouseState;
         private bool isDragAndDropping;
-
-        protected StableShape stableShape;
-        // Store the position in rectagle for collision later
-        // the postion could be changed due to the movement
-        public Rectangle Position 
-        {
-            get { return position; }
-
-            set { position = value; }
-        }
-
-        public bool Active 
-        {
-            get { return active; }
-            set { active = value; }
-        }
-
         public Texture2D Texture
         {
             get { return texture; }
@@ -44,7 +22,7 @@ namespace Avert
         }
 
         //Constructor
-        protected MoveableShape(Texture2D texture, Rectangle position) 
+        protected MoveableShape(Texture2D texture, Rectangle position)
         {
             this.texture = texture;
             this.position = position;
@@ -55,19 +33,20 @@ namespace Avert
         //Loads each movable shape
         public abstract void LoadLevel();
 
-        public virtual void Draw(SpriteBatch spriteBatch) 
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, position, Color.White);
         }
 
-        // moveable shape will have a update location when moving
+        //Moveable shape will have a update location when moving
         public abstract void Update(GameTime gameTime);
 
         //Method for processing input
-        public virtual void ProcessInput()
+        public virtual void ProcessInput(int level)
         {
             MouseState mState = Mouse.GetState();
             GameConfig setup = new GameConfig();
+            setup.Level = level;
             setup.LoadLevel();
 
             //Determines if the mouse button is being held down and if the mouse is hovering over the object.

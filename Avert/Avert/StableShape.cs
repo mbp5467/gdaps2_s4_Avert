@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Avert
@@ -15,7 +10,13 @@ namespace Avert
         //Field & properties
         protected Texture2D texture;
         protected Rectangle position;
-        protected bool active = false;
+        GameConfig game = new GameConfig();
+        protected int level;
+        public int Level
+        {
+            get { return level; }
+            set { level = value; }
+        }
 
         // Store the position in rectagle for collision later
         //and changing the active value using getter and
@@ -25,12 +26,6 @@ namespace Avert
             get { return position; }
 
             set { position = value; }
-        }
-
-        public bool Active
-        {
-            get { return active; }
-            set { active = value; }
         }
 
         public Texture2D Texture
@@ -51,7 +46,11 @@ namespace Avert
             spriteBatch.Draw(texture, position, Color.Black);
         }
 
-        //Load the position of stableShape in each level
-        public abstract void LoadLevel(); 
+        //Load the positions of each StableShape in each level
+        public virtual void LoadLevel()
+        {
+            game.Level = level;
+            game.LoadLevel();
+        }
     }
 }

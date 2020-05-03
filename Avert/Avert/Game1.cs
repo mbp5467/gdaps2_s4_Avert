@@ -2,17 +2,16 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace Avert
 {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
+    #region Enums
     //Making the enumerations for the game phases.
     //These are the main menu, controls, level select,
-    //the actual level, and game over
+    //the actual level, game over, and win
     enum GameStates
     {
         Menu,
@@ -22,13 +21,18 @@ namespace Avert
         Failure,
         Wins
     }
+    #endregion
+
     public class Game1 : Game
     {
+        #region Fields
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         //Making the various fields, each representing
         //various elements used in the game.
+
+        //Rectangles used for everything, from buttons, to game objects
         private Rectangle imageRectangle;
         private Rectangle controlRectangle;
         private Rectangle levelRectangle;
@@ -37,7 +41,12 @@ namespace Avert
         private Rectangle rotateCWRectangle;
         private Rectangle rotateCCWRectangle;
         private Rectangle numberRectangle;
+        private Rectangle numberRectangleTwo;
+        private Rectangle numberRectangleThree;
+        private Rectangle numberRectangleFour;
+        private Rectangle numberRectangleFive;
 
+        //Textures for everything in this game
         private SpriteFont mainFont;
         private Texture2D mirrorTextureBR;
         private Texture2D mirrorTextureBL;
@@ -64,18 +73,20 @@ namespace Avert
         private Texture2D rotateCW;
         private Texture2D rotateCCW;
 
+        //Fields for keyboard and mouse states for input
+        //as well as a GameStates enum
         KeyboardState previousKeyboardState;
         MouseState previousMouseState;
-        GameStates currentState; //Fields for keyboard and mouse states for input
-                                 //as well as a GameStates enum
+        GameStates currentState;
 
+        //All of these are used in Update for loading levels 
+        //and making the laser work properly
+        int levelNumber;
         bool loadLevel;
         bool isLaserShoot;
         bool laserAnimation;
         bool hitWall;
         bool hitTarget;
-
-        //Used to determine if the object is being dragged by the mouse.
 
         //Life and total life fields
         int life = 5;
@@ -97,15 +108,17 @@ namespace Avert
         private Target targets;
         private Laser lasers;
         private LaserBeam laserBeam;
-         
-        GameConfig setup = new GameConfig();
 
+        GameConfig setup;
+        #endregion
+
+        #region Constructor
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            //Changing the width and height of the screen to 500x600
+            //Changing the width and height of the screen to 1920 x 1080 (fullscreen)
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
             graphics.IsFullScreen = false;
@@ -113,7 +126,9 @@ namespace Avert
             graphics.ApplyChanges();
 
         }
+        #endregion
 
+        #region Initialize
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -127,22 +142,45 @@ namespace Avert
             previousKeyboardState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
             currentState = GameStates.Menu;
+            setup = new GameConfig();
             imageRectangle = new Rectangle(405, 505, 50, 50);
-            controlRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 - 400, graphics.PreferredBackBufferHeight / 2 +290, 175, 50);
-            levelRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 + 200, graphics.PreferredBackBufferHeight / 2 +290, 130, 60);
-            gameRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 - 100, graphics.PreferredBackBufferHeight / 2 +290, 255, 60);
-            titleRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 320) / 2, graphics.PreferredBackBufferHeight / 3, 320, 180);
-            numberRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 300) / 2, graphics.PreferredBackBufferHeight / 3+50, 50, 50);
+            //All of the following rectangles are buttons for menu navigation
+            controlRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 - 400,
+                graphics.PreferredBackBufferHeight / 2 + 290, 175, 50);
+            levelRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 + 200,
+                graphics.PreferredBackBufferHeight / 2 + 290, 130, 60);
+            gameRectangle = new Rectangle(graphics.PreferredBackBufferWidth / 2 - 100,
+                graphics.PreferredBackBufferHeight / 2 + 290, 255, 60);
+            titleRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 320) / 2,
+                graphics.PreferredBackBufferHeight / 3, 320, 180);
+            numberRectangle = new Rectangle((graphics.PreferredBackBufferWidth - 300) / 2,
+                graphics.PreferredBackBufferHeight / 3 + 50, 50, 50);
+            numberRectangleTwo = new Rectangle((graphics.PreferredBackBufferWidth - 300) / 2 + 60,
+                graphics.PreferredBackBufferHeight / 3 + 50, 50, 50);
+            numberRectangleThree = new Rectangle((graphics.PreferredBackBufferWidth - 300) / 2 + 120,
+                graphics.PreferredBackBufferHeight / 3 + 50, 50, 50);
+            numberRectangleFour = new Rectangle((graphics.PreferredBackBufferWidth - 300) / 2 + 180,
+                graphics.PreferredBackBufferHeight / 3 + 50, 50, 50);
+            numberRectangleFive = new Rectangle((graphics.PreferredBackBufferWidth - 300) / 2 + 240,
+                graphics.PreferredBackBufferHeight / 3 + 50, 50, 50);
             IsMouseVisible = true;
             loadLevel = false;
             mirror = new Mirror(mirrorTextureBR, imageRectangle);
+            lasers = new Laser(startUp);
             walls = new Wall(wallBlue);
             targets = new Target(target);
             laserBeam = new LaserBeam(laser);
             base.Initialize();
         }
+        #endregion
 
-        //Checks for single key press
+        #region SingleKeyPress
+        /// <summary>
+        /// Checks for single key press
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="current"></param>
+        /// <returns></returns>
         private bool SingleKeyPress(Keys key, KeyboardState current)
         {
             if (current.IsKeyDown(key) && previousKeyboardState.IsKeyUp(key))
@@ -161,7 +199,12 @@ namespace Avert
             }
             return false;
         }
+        #endregion
 
+        #region ProcessInput
+        /// <summary>
+        /// Helper method for checking every input in every screen
+        /// </summary>
         private void ProcessInput()
         {
             //Making the keyboard and mouse states to be used
@@ -175,7 +218,7 @@ namespace Avert
             }
 
             //Exits the game
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Back))
                 Exit();
 
             //Switch statement for processing input, allowing the transitions between states.
@@ -185,6 +228,7 @@ namespace Avert
             switch (currentState)
             {
                 case GameStates.Menu:
+                    //Goes to the controls screen
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                         && mState.Position.X > controlRectangle.X && mState.Position.X < (controlRectangle.X + controlRectangle.Width)
                         && mState.Position.Y > controlRectangle.Y && mState.Position.Y < (controlRectangle.Y + controlRectangle.Height)
@@ -192,6 +236,7 @@ namespace Avert
                     {
                         currentState = GameStates.Control;
                     }
+                    //Goes to the level select screen
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
@@ -202,28 +247,37 @@ namespace Avert
                     break;
 
                 case GameStates.Control:
-
+                    //Starts level 1
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                          && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
                          && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
                          || (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
                     {
+                        levelNumber = 1;
+                        setup.Level = levelNumber;
+                        mirror.Level = levelNumber;
+                        lasers.Level = levelNumber;
+                        targets.Level = levelNumber;
+                        walls.Level = levelNumber;
+                        laserBeam.Level = levelNumber;
+                        life = Total_Life;
                         isLaserShoot = false;
                         laserAnimation = false;
                         laserBeam.HitMirrorSide = false;
                         currentState = GameStates.Stage;
                     }
+                    //Goes to the level select screen
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
                        || kbState.IsKeyDown(Keys.L))
                     {
-                        life = Total_Life;
                         currentState = GameStates.Select;
                     }
                     break;
 
                 case GameStates.Select:
+                    //Goes to the Controls screen
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                         && mState.Position.X > controlRectangle.X && mState.Position.X < (controlRectangle.X + controlRectangle.Width)
                         && mState.Position.Y > controlRectangle.Y && mState.Position.Y < (controlRectangle.Y + controlRectangle.Height)
@@ -231,14 +285,95 @@ namespace Avert
                     {
                         currentState = GameStates.Control;
                     }
+                    //Goes to the stage. Each if statement is different depending on the level
+                    //Level 1
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                           && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
-                          && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)|| 
+                          && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height) ||
                           mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
                           && mState.Position.X > numberRectangle.X && mState.Position.X < (numberRectangle.X + numberRectangle.Width)
                           && mState.Position.Y > numberRectangle.Y && mState.Position.Y < (numberRectangle.Y + numberRectangle.Height)
                           || (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space)))
                     {
+                        levelNumber = 1;
+                        mirror.Level = levelNumber;
+                        lasers.Level = levelNumber;
+                        targets.Level = levelNumber;
+                        walls.Level = levelNumber;
+                        laserBeam.Level = levelNumber;
+                        setup.Level = levelNumber;
+                        life = Total_Life;
+                        isLaserShoot = false;
+                        laserAnimation = false;
+                        laserBeam.HitMirrorSide = false;
+                        currentState = GameStates.Stage;
+                    }
+                    //Level 2
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > numberRectangleTwo.X && mState.Position.X < (numberRectangleTwo.X + numberRectangleTwo.Width)
+                          && mState.Position.Y > numberRectangleTwo.Y && mState.Position.Y < (numberRectangleTwo.Y + numberRectangleTwo.Height))
+                    {
+                        levelNumber = 2;
+                        setup.Level = levelNumber;
+                        mirror.Level = levelNumber;
+                        lasers.Level = levelNumber;
+                        targets.Level = levelNumber;
+                        walls.Level = levelNumber;
+                        laserBeam.Level = levelNumber;
+                        life = Total_Life;
+                        isLaserShoot = false;
+                        laserAnimation = false;
+                        laserBeam.HitMirrorSide = false;
+                        currentState = GameStates.Stage;
+                    }
+                    //Level 3
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > numberRectangleThree.X && mState.Position.X < (numberRectangleThree.X + numberRectangleThree.Width)
+                          && mState.Position.Y > numberRectangleThree.Y && mState.Position.Y < (numberRectangleThree.Y + numberRectangleThree.Height))
+                    {
+                        levelNumber = 3;
+                        setup.Level = levelNumber;
+                        mirror.Level = levelNumber;
+                        lasers.Level = levelNumber;
+                        targets.Level = levelNumber;
+                        walls.Level = levelNumber;
+                        laserBeam.Level = levelNumber;
+                        life = Total_Life;
+                        isLaserShoot = false;
+                        laserAnimation = false;
+                        laserBeam.HitMirrorSide = false;
+                        currentState = GameStates.Stage;
+                    }
+                    //Level 4
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > numberRectangleFour.X && mState.Position.X < (numberRectangleFour.X + numberRectangleFour.Width)
+                          && mState.Position.Y > numberRectangleFour.Y && mState.Position.Y < (numberRectangleFour.Y + numberRectangleFour.Height))
+                    {
+                        levelNumber = 4;
+                        setup.Level = levelNumber;
+                        mirror.Level = levelNumber;
+                        lasers.Level = levelNumber;
+                        targets.Level = levelNumber;
+                        walls.Level = levelNumber;
+                        laserBeam.Level = levelNumber;
+                        life = Total_Life;
+                        isLaserShoot = false;
+                        laserAnimation = false;
+                        laserBeam.HitMirrorSide = false;
+                        currentState = GameStates.Stage;
+                    }
+                    //Level 5
+                    if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
+                          && mState.Position.X > numberRectangleFive.X && mState.Position.X < (numberRectangleFive.X + numberRectangleFive.Width)
+                          && mState.Position.Y > numberRectangleFive.Y && mState.Position.Y < (numberRectangleFive.Y + numberRectangleFive.Height))
+                    {
+                        levelNumber = 5;
+                        setup.Level = levelNumber;
+                        mirror.Level = levelNumber;
+                        lasers.Level = levelNumber;
+                        targets.Level = levelNumber;
+                        walls.Level = levelNumber;
+                        laserBeam.Level = levelNumber;
                         life = Total_Life;
                         isLaserShoot = false;
                         laserAnimation = false;
@@ -248,23 +383,24 @@ namespace Avert
                     break;
 
                 case GameStates.Stage:
-
                     //Restart the game
                     if (kbState.IsKeyDown(Keys.R))
                     {
                         life--;
                         currentState = GameStates.Failure;
                     }
-                    //Game over if your life is out or there's no time left
+                    //Game over if you run out of lives or there's no time left
                     if (life == 0 || timer <= 0)
                     {
                         life--;
                         currentState = GameStates.Failure;
                     }
+
                     //Rotate buttons turn the mirror
+                    //1 = TopRight, 2 = BottomRight, 3 = BottomLeft, 4 = TopLeft
                     if (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed
-                          && mState.Position.X > rotateCWRectangle.X && mState.Position.X < (rotateCWRectangle.X + rotateCWRectangle.Width)
-                          && mState.Position.Y > rotateCWRectangle.Y && mState.Position.Y < (rotateCWRectangle.Y + rotateCWRectangle.Height))
+                      && mState.Position.X > rotateCWRectangle.X && mState.Position.X < (rotateCWRectangle.X + rotateCWRectangle.Width)
+                      && mState.Position.Y > rotateCWRectangle.Y && mState.Position.Y < (rotateCWRectangle.Y + rotateCWRectangle.Height))
                     {
                         if (mirror.Direction < 4)
                         {
@@ -321,14 +457,14 @@ namespace Avert
                         }
                     }
 
-                    //shoot laser
+                    //Shoots the laser
                     if (kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                     {
                         if (isLaserShoot == false)
                         {
                             //Initializes the location of the laser and its direction
-                            laserBeam.ShooterLocation = lasers.Location;
-                            laserBeam.Location = lasers.Location;
+                            laserBeam.ShooterLocation = lasers.Position;
+                            laserBeam.Location = lasers.Position;
                             laserBeam.ShooterDirection = lasers.Direction;
                             laserBeam.CurrentDirection = lasers.Direction;
                             isLaserShoot = true;
@@ -338,69 +474,70 @@ namespace Avert
                         }
                     }
 
-                    /*
-                    if (mirror.Position.X >= setup.tileSize && mirror.Position.X <= (2* setup.tileSize) &&
-                        mirror.Position.Y >= (3*setup.tileSize) && mirror.Position.Y <= (4 * setup.tileSize)
-                        && (mState.LeftButton == ButtonState.Released))
-                        */
-                    if ((mirror.Position.Intersects(lasers.Position) || mirror.Position.Intersects(targets.Position) || mirror.Position.Intersects(walls.Position))
-                        && (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released))
+                    //If the mirror overlaps another object, it goes back to its original position
+                    foreach (Rectangle wall in walls.ListOfWalls)
                     {
-                        imageRectangle.X = 405;
-                        imageRectangle.Y = 505;
+                        if ((mirror.Position.Intersects(lasers.Position)
+                        || mirror.Position.Intersects(targets.Position)
+                        || mirror.Position.Intersects(wall))
+                        && (mState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Released))
+                        {
+                            mirror.Position = imageRectangle;
+                        }
                     }
-
-                   break;
+                    break;
 
                 case GameStates.Failure:
                     Reset();
+                    //Goes back to the stage select screen
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
-                       && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
-                       && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
+                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
+                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
                         || kbState.IsKeyDown(Keys.L))
-                   {
-                      currentState = GameStates.Select;
-                   }
-
-                   if (kbState.IsKeyDown(Keys.Escape))
-                   {
-                     currentState = GameStates.Menu;
-                   }
-
+                    {
+                        timer = Time; //Resets the timer
+                        currentState = GameStates.Select;
+                    }
+                    //Goes back to the main menu
+                    if (kbState.IsKeyDown(Keys.Escape))
+                    {
+                        currentState = GameStates.Menu;
+                    }
+                    //If the player still has some lives, they can restart the level
                     if (life > 0)
                     {
                         if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
-                               && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
-                               && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
-                               || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
+                            && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
+                            && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
+                            || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                         {
                             timer = Time; //Resets the timer
                             currentState = GameStates.Stage;
                         }
                     }
-                   break;
+                    break;
 
                 case GameStates.Wins:
-
                     Reset();
-                    score = 10;
+                    //Goes back to the stage select screen
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
-                       && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
-                       && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
+                        && mState.Position.X > levelRectangle.X && mState.Position.X < (levelRectangle.X + levelRectangle.Width)
+                        && mState.Position.Y > levelRectangle.Y && mState.Position.Y < (levelRectangle.Y + levelRectangle.Height)
                         || kbState.IsKeyDown(Keys.L))
                     {
+                        timer = Time; //Resets the timer
                         currentState = GameStates.Select;
                     }
-
+                    //Restarts the level
                     if (mState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed
-                                                  && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
-                                                  && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
-                                                  || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
+                        && mState.Position.X > gameRectangle.X && mState.Position.X < (gameRectangle.X + gameRectangle.Width)
+                        && mState.Position.Y > gameRectangle.Y && mState.Position.Y < (gameRectangle.Y + gameRectangle.Height)
+                        || kbState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
                     {
                         timer = Time; //Resets the timer
                         currentState = GameStates.Stage;
                     }
-
+                    //Goes back to the main menu
                     if (kbState.IsKeyDown(Keys.Escape))
                     {
                         currentState = GameStates.Menu;
@@ -411,12 +548,16 @@ namespace Avert
             previousKeyboardState = kbState;
             previousMouseState = mState;
         }
+        #endregion
 
-        private void Reset() 
+        #region Reset
+        /// <summary>
+        /// Resets everything back to their original poisiton and stage
+        /// </summary>
+        private void Reset()
         {
-            //reset everything to original poisiton and stage
-            laserBeam.ShooterLocation = lasers.Location;
-            laserBeam.Location = lasers.Location;
+            laserBeam.ShooterLocation = lasers.Position;
+            laserBeam.Location = lasers.Position;
             laserBeam.ShooterDirection = lasers.Direction;
             laserBeam.CurrentDirection = lasers.Direction;
             isLaserShoot = false;
@@ -425,8 +566,11 @@ namespace Avert
             walls.Texture = wallBlue;
             targets.Texture = target;
             mirror.Position = imageRectangle;
-        }
 
+        }
+        #endregion
+
+        #region LoadContent
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -464,14 +608,16 @@ namespace Avert
             title = Content.Load<Texture2D>("textures/gui/title");
             rotateCW = Content.Load<Texture2D>("textures/gui/rotateCW");
             rotateCCW = Content.Load<Texture2D>("textures/gui/rotateCCW");
-
             mirror = new Mirror(mirrorTextureBR, imageRectangle);
             walls = new Wall(wallBlue);
             targets = new Target(target);
             lasers = new Laser(startUp);
             laserBeam = new LaserBeam(laser);
-        }
 
+        }
+        #endregion
+
+        #region UnloadContent
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
@@ -480,7 +626,9 @@ namespace Avert
         {
             // TODO: Unload any non ContentManager content here
         }
+        #endregion
 
+        #region Update
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -489,10 +637,10 @@ namespace Avert
         protected override void Update(GameTime gameTime)
         {
             // TODO: Add your update logic here
-            // timer system
             ProcessInput();
             if (currentState == GameStates.Stage)
             {
+                //Timer system
                 if (isLaserShoot == false)
                 {
                     timer -= gameTime.ElapsedGameTime.TotalSeconds;
@@ -501,6 +649,7 @@ namespace Avert
                 {
                     shootTimer -= gameTime.ElapsedGameTime.TotalSeconds;
                 }
+                //Loads in everything for each level
                 if (loadLevel == false)
                 {
                     rotateCWRectangle = new Rectangle(300, 500, rotateCW.Width, rotateCW.Height);
@@ -508,34 +657,32 @@ namespace Avert
                     setup.LoadLevel();
                     imageRectangle.Width = setup.ShapeSize();
                     imageRectangle.Height = setup.ShapeSize();
-                    mirror.LoadLevel();
                     walls.LoadLevel();
                     lasers.LoadLevel();
-                    //Rotates the laser shooter according to the txt file.
-                    //Currently, texture doesn't change for some reason.
-                    if (lasers.Direction == 1)
-                    {
-                        lasers.Texture = startUp;
-                    }
-                    else if (lasers.Direction == 2)
-                    {
-                        lasers.Texture = startDown;
-                    }
-                    else if (lasers.Direction == 3)
-                    {
-                        lasers.Texture = startLeft;
-                    }
-                    else if (lasers.Direction == 4)
-                    {
-                        lasers.Texture = startRight;
-                    }
                     targets.LoadLevel();
+                    mirror.LoadLevel();
+                    laserBeam.LoadLevel();
                     loadLevel = true;
                 }
-
-                //Collision statements for the laser. 
-                //Currently, only the mirror works for some reason.
-                if (laserBeam.Location.Intersects(mirror.Position))
+                //Rotates the laser shooter according to the txt file.
+                if (lasers.Direction == 1)
+                {
+                    lasers.Texture = startUp;
+                }
+                else if (lasers.Direction == 2)
+                {
+                    lasers.Texture = startDown;
+                }
+                else if (lasers.Direction == 3)
+                {
+                    lasers.Texture = startLeft;
+                }
+                else if (lasers.Direction == 4)
+                {
+                    lasers.Texture = startRight;
+                }
+                //Collision statements for the laser.
+                if (isLaserShoot == true && laserBeam.Location.Intersects(mirror.Position))
                 {
                     laserBeam.HitMirror(mirror.Direction);
                 }
@@ -547,60 +694,64 @@ namespace Avert
                 {
                     laserBeam.Texture = laserH;
                 }
-                if (laserBeam.HitMirrorSide == true)
+                if (isLaserShoot == true && laserBeam.HitMirrorSide == true)
                 {
                     laserAnimation = false;
-                    life--;
                     if (shootTimer <= 0)
                     {
+                        life--;
                         currentState = GameStates.Failure;
                     }
                 }
                 //Hits the wall, fails the level
-                if (laserBeam.Location.Intersects(walls.Position))
+                if (isLaserShoot == true && laserBeam.Location.Intersects(walls.Position))
                 {
                     laserAnimation = false;
                     walls.Texture = wallRed;
                     hitWall = true;
-                    life--;
                     if (shootTimer <= 0)
                     {
+                        life--;
                         currentState = GameStates.Failure;
                     }
                 }
                 //Hits the target, wins the level
-                if (laserBeam.Location.Intersects(targets.Position))
+                if (isLaserShoot == true && laserBeam.Location.Intersects(targets.Position))
                 {
                     laserAnimation = false;
                     targets.Texture = targetFilled;
                     hitTarget = true;
                     if (shootTimer <= 0)
                     {
+                        score += 10;
                         currentState = GameStates.Wins;
                     }
                 }
                 //Out of boundaries, fails the level
-                if (laserBeam.Location.X < 0 || laserBeam.Location.Y < 0 || laserBeam.Location.X > 500 || laserBeam.Location.Y > 500)
+                if (isLaserShoot == true && (laserBeam.Location.X < 0 || laserBeam.Location.Y < 0
+                    || laserBeam.Location.X > 500 || laserBeam.Location.Y > 500))
                 {
                     laserAnimation = false;
-                    life--;
                     if (shootTimer <= 0)
                     {
+                        life--;
                         currentState = GameStates.Failure;
                     }
                 }
+                //Used for drag/drop
                 mirror.Update(gameTime);
             }
+            //Reset condition if the game isn't in the stage state
             else if (currentState != GameStates.Stage)
             {
                 timer = 10.000;
                 loadLevel = false;
             }
-            
-            
             base.Update(gameTime);
         }
+        #endregion
 
+        #region HoveringBoxes
         //Draws box based on if mouse is hovering over given rectangle or not
         private void DrawHoveringBoxes(Texture2D hovering, Texture2D notHovering, Rectangle Rect)
         {
@@ -613,7 +764,9 @@ namespace Avert
                 spriteBatch.Draw(notHovering, Rect, Color.White);
             }
         }
+        #endregion
 
+        #region Draw
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -636,15 +789,18 @@ namespace Avert
                     spriteBatch.Draw(title, titleRectangle, Color.White);
                     DrawHoveringBoxes(boxSelected, box, controlRectangle);
                     DrawHoveringBoxes(boxSelected, box, levelRectangle);
-                    
-                    spriteBatch.DrawString(mainFont, "(C)ontrols", 
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 390, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
-                   
-                    spriteBatch.DrawString(mainFont, "(L)evel \n select", 
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300),Color.White);
-                    
-                    spriteBatch.DrawString(mainFont, "Press F1 to toggle fullscreen.",
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 220, graphics.PreferredBackBufferHeight - 80), Color.White);
+
+                    spriteBatch.DrawString(mainFont, "(C)ontrols",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 390,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
+
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
+
+                    spriteBatch.DrawString(mainFont, "Press F1 to toggle fullscreen. Or press Backspace to quit.",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 480,
+                        graphics.PreferredBackBufferHeight - 80), Color.White);
                     break;
 
                 case GameStates.Control:
@@ -652,58 +808,96 @@ namespace Avert
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     spriteBatch.DrawString(mainFont, "Controls",
                         new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, 100), Color.White);
-                    spriteBatch.DrawString(mainFont,"Click and drag the objects with the mouse," +
-                        "\nshoot the laser with the space bar, and" +
-                        " \nhit the target to clear the level!", 
-                        new Vector2(graphics.PreferredBackBufferWidth / 3, 200), Color.White);
-                    
+                    spriteBatch.DrawString(mainFont, "Click and drag the mirror with the mouse," +
+                        "\n\nshoot the laser with the space bar, and" +
+                        " \n\nhit the target to clear the level!",
+                        new Vector2(graphics.PreferredBackBufferWidth / 3, 150), Color.White);
+
                     DrawHoveringBoxes(boxSelected, box, levelRectangle);
-                    spriteBatch.DrawString(mainFont, "(L)evel \n select", 
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
-                    
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
+
                     DrawHoveringBoxes(boxSelected, box, gameRectangle);
-                    spriteBatch.DrawString(mainFont, "Start \n (press space)", 
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 95, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
+                    spriteBatch.DrawString(mainFont, "Start level 1 \n (press space)",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 95,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
 
                     //icon intro
                     spriteBatch.Draw(startUp, new Rectangle(graphics.PreferredBackBufferWidth / 3, 300, 50, 50), Color.White);
-                    spriteBatch.DrawString(mainFont, "This is the Laser." + "\n" + "\n" +
-                        "This will shoot the laser in the direction it is facing.", new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 300), Color.White);
+                    spriteBatch.DrawString(mainFont, "This is the Laser Shooter." + "\n" + "\n" +
+                        "This will shoot the laser in the direction it is facing.",
+                        new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 300), Color.White);
 
                     spriteBatch.Draw(target, new Rectangle(graphics.PreferredBackBufferWidth / 3, 400, 50, 50), Color.White);
-                    spriteBatch.DrawString(mainFont, "This is the target" + "\n" + "\n" + 
-                        "This is where the laser will hit. When hit, the level is cleared.", new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 400), Color.White);
+                    spriteBatch.DrawString(mainFont, "This is the Target." + "\n" + "\n" +
+                        "This is what the laser will hit. When hit, the level is cleared.",
+                        new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 400), Color.White);
 
                     spriteBatch.Draw(wallBlue, new Rectangle(graphics.PreferredBackBufferWidth / 3, 500, 50, 50), Color.White);
                     spriteBatch.Draw(wallRed, new Rectangle(graphics.PreferredBackBufferWidth / 3, 550, 50, 50), Color.White);
                     spriteBatch.DrawString(mainFont, "This is the Wall.\n" + "\n" +
-                        "This will block the laser and destroy", new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 525), Color.White);
+                        "This will block the laser and destroy it.",
+                        new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 525), Color.White);
 
-                    spriteBatch.Draw(mirrorTextureBR, new Rectangle(graphics.PreferredBackBufferWidth / 3, 650, 50, 50), Color.White);
+                    spriteBatch.Draw(mirrorTextureBR,
+                        new Rectangle(graphics.PreferredBackBufferWidth / 3, 650, 50, 50), Color.White);
                     spriteBatch.DrawString(mainFont, "This is the Mirror.\n" + "\n" +
-                        "This will reflect the laser in another direction.", new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 650), Color.White);
+                        "This will reflect the laser in another direction.",
+                        new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 650), Color.White);
+                    spriteBatch.Draw(rotateCCW,
+                        new Rectangle(graphics.PreferredBackBufferWidth / 3 - 30, 720, 50, 50), Color.White);
+                    spriteBatch.Draw(rotateCW,
+                        new Rectangle(graphics.PreferredBackBufferWidth / 3 + 30, 720, 50, 50), Color.White);
+                    spriteBatch.DrawString(mainFont, "This can be rotated with the rotate buttons.",
+                        new Vector2(graphics.PreferredBackBufferWidth / 3 + 100, 720), Color.White);
                     break;
 
                 case GameStates.Select:
                     GraphicsDevice.Clear(Color.Black);
+                    //Draws all of the buttons
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
-                    spriteBatch.DrawString(mainFont, "Level select", 
-                        new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.White);
+                    spriteBatch.DrawString(mainFont, "Level select",
+                        new Vector2((graphics.PreferredBackBufferWidth - 200) / 2,
+                        graphics.PreferredBackBufferHeight / 3), Color.White);
                     DrawHoveringBoxes(boxSelected, box, gameRectangle);
-                    spriteBatch.DrawString(mainFont, "Start \n (press space)",
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 95, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
+                    spriteBatch.DrawString(mainFont, "Start level 1 \n (press space)",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 95,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
                     DrawHoveringBoxes(boxSelected, box, levelRectangle);
-                    spriteBatch.DrawString(mainFont, "(L)evel \n select", 
-                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
-
+                    spriteBatch.DrawString(mainFont, "(L)evel \n select",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
                     DrawHoveringBoxes(boxSelected, box, numberRectangle);
-                   spriteBatch.DrawString(mainFont, "1",
-                       new Vector2(graphics.PreferredBackBufferWidth / 2 -130, graphics.PreferredBackBufferHeight / 3 + 65), Color.White);
+                    spriteBatch.DrawString(mainFont, "1",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 130,
+                        graphics.PreferredBackBufferHeight / 3 + 65), Color.White);
+                    DrawHoveringBoxes(boxSelected, box, numberRectangleTwo);
+                    spriteBatch.DrawString(mainFont, "2",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 70,
+                        graphics.PreferredBackBufferHeight / 3 + 65), Color.White);
+                    DrawHoveringBoxes(boxSelected, box, numberRectangleThree);
+                    spriteBatch.DrawString(mainFont, "3",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 - 10,
+                        graphics.PreferredBackBufferHeight / 3 + 65), Color.White);
+                    DrawHoveringBoxes(boxSelected, box, numberRectangleFour);
+                    spriteBatch.DrawString(mainFont, "4",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 50,
+                        graphics.PreferredBackBufferHeight / 3 + 65), Color.White);
+                    DrawHoveringBoxes(boxSelected, box, numberRectangleFive);
+                    spriteBatch.DrawString(mainFont, "5",
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 110,
+                        graphics.PreferredBackBufferHeight / 3 + 65), Color.White);
                     break;
 
                 case GameStates.Stage:
                     //Drawing the grid
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
+                    setup.Draw(spriteBatch, gridTexture);
+                    GraphicsDevice.Clear(Color.Aquamarine);
+                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n"
+                        + "Health: " + life.ToString(), new Vector2(10f, 510f), Color.Black);
+                    //Draws the rotation buttons
                     if (IsHovering(Mouse.GetState(), rotateCCWRectangle))
                     {
                         spriteBatch.Draw(rotateCCW, rotateCCWRectangle, Color.Blue);
@@ -720,66 +914,72 @@ namespace Avert
                     {
                         spriteBatch.Draw(rotateCW, rotateCWRectangle, Color.White);
                     }
-                    setup.Draw(spriteBatch, gridTexture);
-                    GraphicsDevice.Clear(Color.Aquamarine);
-                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n" + "Health: "+life.ToString(), new Vector2(10f, 510f), Color.Black);
+                    //Draws all of the pieces
                     walls.Draw(spriteBatch);
                     targets.Draw(spriteBatch);
                     lasers.Draw(spriteBatch);
-                    if (mirror.Active == true)
+                    mirror.Draw(spriteBatch);
+                    //Draws the laser when it's fired
+                    if (isLaserShoot == true)
                     {
-                        mirror.Draw(spriteBatch);
+                        spriteBatch.DrawString(mainFont, "Shoot the laser!", new Vector2(100, 620), Color.Red);
                     }
-                    //Draws the laser
-                    if (laserAnimation == true) 
+                    if (laserAnimation == true)
                     {
-                        spriteBatch.DrawString(mainFont, "Shoot the laser!", new Vector2(100, 600), Color.Red);
                         laserBeam.DrawLaser(spriteBatch);
                     }
 
-                    // trys to change the color when hit wall or target
-                    if (hitWall == true) 
+                    //Changes the texture of the object if the laser hits it
+                    if (hitWall == true)
                     {
                         walls.Draw(spriteBatch);
                     }
-                    if (hitTarget == true) 
+                    if (hitTarget == true)
                     {
                         targets.Draw(spriteBatch);
                     }
-
                     break;
 
                 case GameStates.Failure:
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
-                    spriteBatch.DrawString(mainFont, "FAILED!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.Red);
-                    spriteBatch.DrawString(mainFont, "Score: " + score.ToString(), new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.Red);
-
+                    spriteBatch.DrawString(mainFont, "FAILED!",
+                        new Vector2((graphics.PreferredBackBufferWidth - 200) / 2,
+                        graphics.PreferredBackBufferHeight / 3), Color.Red);
+                    spriteBatch.DrawString(mainFont, "Score: " + score.ToString(),
+                        new Vector2((graphics.PreferredBackBufferWidth - 200) / 2,
+                        graphics.PreferredBackBufferHeight / 3 + 100), Color.Red);
                     DrawHoveringBoxes(boxSelected, box, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select",
-                    new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300), Color.White); 
-                    if (life > 0) 
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
+                    if (life > 0)
                     {
                         DrawHoveringBoxes(boxSelected, box, gameRectangle);
-                        spriteBatch.DrawString(mainFont, "Rstart\n (press space)",
-                            new Vector2(graphics.PreferredBackBufferWidth / 2 - 95, graphics.PreferredBackBufferHeight / 2 + 300), Color.Red);
+                        spriteBatch.DrawString(mainFont, "Restart\n (press space)",
+                            new Vector2(graphics.PreferredBackBufferWidth / 2 - 95,
+                            graphics.PreferredBackBufferHeight / 2 + 300), Color.Red);
                     }
                     break;
 
                 case GameStates.Wins:
-                    
                     GraphicsDevice.Clear(Color.Black);
                     spriteBatch.Draw(backgroundRed, new Vector2(0f, 0f), Color.White);
-                    spriteBatch.DrawString(mainFont, "You win!", new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3), Color.White);
-                    spriteBatch.DrawString(mainFont, "Score: " + score.ToString(), new Vector2((graphics.PreferredBackBufferWidth - 200) / 2, graphics.PreferredBackBufferHeight / 3 + 100), Color.White);
+                    spriteBatch.DrawString(mainFont, "You win!",
+                        new Vector2((graphics.PreferredBackBufferWidth - 200) / 2,
+                        graphics.PreferredBackBufferHeight / 3), Color.White);
+                    spriteBatch.DrawString(mainFont, "Score: " + score.ToString(),
+                        new Vector2((graphics.PreferredBackBufferWidth - 200) / 2,
+                        graphics.PreferredBackBufferHeight / 3 + 100), Color.White);
                     DrawHoveringBoxes(boxRedSelected, boxRed, levelRectangle);
                     spriteBatch.DrawString(mainFont, "(L)evel \n select",
-                    new Vector2(graphics.PreferredBackBufferWidth / 2 + 205, graphics.PreferredBackBufferHeight / 2 + 300), Color.White); 
-                    
+                        new Vector2(graphics.PreferredBackBufferWidth / 2 + 205,
+                        graphics.PreferredBackBufferHeight / 2 + 300), Color.White);
                     break;
             }
             spriteBatch.End();
             base.Draw(gameTime);
         }
+        #endregion
     }
 }

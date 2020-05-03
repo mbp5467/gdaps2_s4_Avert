@@ -146,8 +146,19 @@ namespace Level_Editor
             bool moveExists = int.TryParse(mirrorsAllowed.Text, out int move);
             bool laserExists = false;
             int numberOfLasers = 0;
+            int numberOfTargets = 0;
             bool laserDirectionSet = false;
             bool targetExists = false;
+            int gridSizeX = 5;
+            int gridSizeY = 5;
+            if (gridX.Items.Contains(gridX.Text))
+            {
+                gridSizeX = int.Parse(gridX.Text);
+            }
+            if (gridY.Items.Contains(gridY.Text))
+            {
+                gridSizeY = int.Parse(gridY.Text);
+            }
             for (int i = 0; i < gridSpots.Count; i++)
             {
                 if (gridSpots[i].Items.Contains(gridSpots[i].Text) && gridSpots[i].Text == "Laser")
@@ -159,6 +170,10 @@ namespace Level_Editor
                         laserDirectionSet = true;
                     }
                 }
+                if (gridSpots[i].Items.Contains(gridSpots[i].Text) && gridSpots[i].Text == "Target")
+                {
+                    numberOfTargets++;
+                }
             }
             foreach (ComboBox gridSpot in gridSpots)
             {
@@ -169,22 +184,30 @@ namespace Level_Editor
             }
             if (!levelExists || levelNumber.Text == "" || level <= 0
                 || laserExists == false
+                || gridSizeX != 5 || gridSizeY != 5
                 || numberOfLasers > 1
+                || numberOfTargets > 1
                 || laserDirectionSet == false
                 || targetExists == false
                 || !moveExists || mirrorsAllowed.Text == "" || move <= 0)
             {
                 string errorMessage = "Couldn't save the level. Contains the following errors:\n";
-                string lvlError = "- No level number selected\n";
+                string lvlError = "- Level number must be from 1 to 5\n";
+                string gridError = "- Grid size must be 5 x 5\n";
                 string laserError = "- No laser on board\n";
                 string targetError = "- No target on board\n";
-                string placeError = "- Insufficient number of movable objects";
+                string placeError = "- Number of movable objects must be 1";
                 string tooManyLasers = "- More than one laser is set\n";
+                string tooManyTargets = "- More than one larget is set\n";
                 string noDirectionSet = "- Laser doesn't have a set direction\n";
 
-                if (!levelExists || levelNumber.Text == "" || level <= 0)
+                if (!levelExists || levelNumber.Text == "" || level <= 0 || level > 5)
                 {
                     errorMessage = errorMessage + lvlError;
+                }
+                if (gridSizeX != 5 || gridSizeY != 5)
+                {
+                    errorMessage = errorMessage + gridError;
                 }
                 if (laserExists == false)
                 {
@@ -194,6 +217,10 @@ namespace Level_Editor
                 {
                     errorMessage = errorMessage + tooManyLasers;
                 }
+                else if (numberOfTargets > 1)
+                {
+                    errorMessage = errorMessage + tooManyTargets;
+                }
                 else if (laserDirectionSet == false)
                 {
                     errorMessage = errorMessage + noDirectionSet;
@@ -202,12 +229,15 @@ namespace Level_Editor
                 {
                     errorMessage = errorMessage + targetError;
                 }
-                if (!moveExists || mirrorsAllowed.Text == "" || move <= 0)
+                if (!moveExists || mirrorsAllowed.Text == "" || move <= 0 || move > 1)
                 {
                     errorMessage = errorMessage + placeError;
                 }
                 MessageBox.Show(errorMessage, "Error");
             }
+
+
+
 
             else
             {

@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Avert
 {
     class LaserBeam
     {
-        //Gets the location of the starting point
+        //Gets the location and orientation of the starting point
         private Rectangle shooterLocation;
         private int shooterDirection;
         private int currentDirection;
@@ -21,13 +14,18 @@ namespace Avert
         private Texture2D texture;
         //Used to determine if the laser hit the side of the mirror instead of the diagonal
         private bool hitMirrorSide;
-
+        private int level;
+        public int Level
+        {
+            get { return level; }
+            set { level = value; }
+        }
         public Rectangle ShooterLocation
         {
             get { return shooterLocation; }
             set { shooterLocation = value; }
         }
-        public Rectangle Location 
+        public Rectangle Location
         {
             get { return location; }
             set { location = value; }
@@ -57,6 +55,12 @@ namespace Avert
         {
             this.texture = t;
             hitMirrorSide = false;
+        }
+
+        //Method for LoadLevel which receives information about the layout of the level.
+        public void LoadLevel()
+        {
+            game.Level = level;
             game.LoadLevel();
         }
 
@@ -65,6 +69,7 @@ namespace Avert
         {
             if (location.X == ShooterLocation.X && location.Y == ShooterLocation.Y)
             {
+                //Initializes the laser's location and orientation
                 if (shooterDirection == 1)
                 {
                     location.Y -= game.ShapeSize() / 2;
@@ -201,7 +206,5 @@ namespace Avert
                 location.X += game.ShapeSize();
             }
         }
-
-        
     }
 }

@@ -1,77 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Avert
 {
-    /* This is child class of stable shape
+    /* Child class of StableShape
      * Wall will block the laser*/
     class Wall : StableShape
     {
-        //Fields for the wall, being a rectangle for location,
-        //an array of strings, and a new Game object
-        string[] data;
+        //Fields for the wall
         GameConfig game = new GameConfig();
+        //List used in case there's multiple walls in a level
+        List<Rectangle> walls = new List<Rectangle>();
+        public List<Rectangle> ListOfWalls
+        {
+            get { return walls; }
+        }
 
-        //Paramterized construcor that sets the position property to a
-        //location and calls LoadLevel on the created game object
+        //Parameterized constructor that receives the texture of the object
         public Wall(Texture2D t)
             : base(t)
         {
-            game.LoadLevel();
+
         }
 
-        //Method for LoadLevel which sets a fileName
-        //and creates a FileInfo object. It checks if levels exists,
-        //and if it does a new StreamReader is created. While the
-        //created line is not null, it reads data from the file.
-        //If the data is [/], active is set to true.
+        //Method for LoadLevel which receives information about the layout of the level.
         public override void LoadLevel()
         {
-            string filename = "Levels.txt";
-            FileInfo levels = new FileInfo(filename);
-            if (levels.Exists)
-            {
-                StreamReader levelReader = new StreamReader(filename);
-                string line = null;
-                while ((line = levelReader.ReadLine()) != null)
-                {
-                    data = line.Split(',');
-                    if (data[0] == "/")
-                    {
-                        active = true;
-                        break;
-                    }
-                }
-                levelReader.Close();
-            }
+            game.Level = level;
+            game.LoadLevel();
         }
 
         //Method for drawing the wall
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (active == true)
+            //Used to draw the wall if it's in the level
+            //Clears the walls list first so drawn walls don't interfere with
+            //other levels later on
+            walls.Clear();
+            for (int i = 0; i < game.gridSize_W; i++)
             {
-                for (int i = 0; i < game.gridSize_W; i++) 
+
+                for (int j = 0; j < game.gridSize_H; j++)
                 {
-                    for (int j = 0; j < game.gridSize_H; j++) 
+                    int coordinate = (j + 1) * game.gridSize_W + i;
+                    if (game.data[coordinate] == "-")
                     {
-                        int coordinate = (j+1) * game.gridSize_W + i;
-                        if (game.data[coordinate] == "-") 
-                        {
-                            Position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                            spriteBatch.Draw(texture, Position, Color.White);
-                        }
+                        position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                        walls.Add(position);
+                        spriteBatch.Draw(texture, position, Color.White);
                     }
                 }
             }
         }
     }
 }
-    
+

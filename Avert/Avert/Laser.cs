@@ -1,25 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Avert
 {
 
-    /* This is child class of stable shape
+    /* Child class of StableShape
      * Laser is the start point of the game*/
-    class Laser:StableShape
+    class Laser : StableShape
     {
-        //Fields for the laser class, being 
-        //a rectangle location, a data array for saving, 
-        //and a new game object.
-        Rectangle location;
-        string[] data;
+        //Fields for the laser class
         GameConfig game = new GameConfig();
         //1 = up, 2 = down, 3 = left, 4 = right
         int direction = 1;
@@ -29,81 +18,50 @@ namespace Avert
             get { return direction; }
         }
 
-        public Rectangle Location
-        {
-            get { return location; }
-            set { location = value; }
-        }
-
-        //Paramaterized constructor that sets
-        //the position and calls the game's loadLevel method
+        //Parameterized constructor that receives the texture of the object
         public Laser(Texture2D t)
             : base(t)
         {
-            Position = location;
+
+        }
+
+        //Method for LoadLevel which receives information about the layout of the level.
+        public override void LoadLevel()
+        {
+            game.Level = level;
             game.LoadLevel();
         }
 
-        //Method for LoadLevel which sets a fileName
-        //and creates a FileInfo object. It checks if levels exists,
-        //and if it does a new StreamReader is created. While the
-        //created line is not null, it reads data from the file.
-        //If the data is [/], active is set to true.
-        public override void LoadLevel()
-        {
-            string filename = "Levels.txt";
-            FileInfo levels = new FileInfo(filename);
-            if (levels.Exists)
-            {
-                StreamReader levelReader = new StreamReader(filename);
-                string line = null;
-                while ((line = levelReader.ReadLine()) != null)
-                {
-                    data = line.Split(',');
-                    if (data[0] == "/")
-                    {
-                        active = true;
-                        break;
-                    }
-                }
-                levelReader.Close();
-            }
-
-        }
-
+        //Method for drawing the image and getting the direction of the laser shooter
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (active == true)
+            for (int i = 0; i < game.gridSize_W; i++)
             {
-
-                for (int i = 0; i < game.gridSize_W; i++)
+                for (int j = 0; j < game.gridSize_H; j++)
                 {
-                    for (int j = 0; j < game.gridSize_H; j++)
+                    int coordinate = (j + 1) * game.gridSize_W + i;
+                    if (game.data[coordinate] == "11" || game.data[coordinate] == "12" || game.data[coordinate] == "13" || game.data[coordinate] == "14")
                     {
-                        int coordinate = (j + 1) * game.gridSize_W + i;
-                        if (data[coordinate] == "11" || data[coordinate] == "12" || data[coordinate] == "13" || data[coordinate] == "14")
+                        if (game.data[coordinate] == "11")
                         {
-                            location = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
-                            if (data[coordinate] == "11")
-                            {
-                                direction = 1;
-                            }
-                            else if (data[coordinate] == "12")
-                            {
-                                direction = 2;
-                            }
-                            else if (data[coordinate] == "13")
-                            {
-                                direction = 3;
-                            }
-                            else if (data[coordinate] == "14")
-                            {
-                                direction = 4;
-                            }
-                            spriteBatch.Draw(texture, location, Color.White);
+                            direction = 1;
                         }
-
+                        else if (game.data[coordinate] == "12")
+                        {
+                            direction = 2;
+                        }
+                        else if (game.data[coordinate] == "13")
+                        {
+                            direction = 3;
+                        }
+                        else if (game.data[coordinate] == "14")
+                        {
+                            direction = 4;
+                        }
+                        position = new Rectangle(i * game.tileSize, j * game.tileSize, game.ShapeSize(), game.ShapeSize());
+                        spriteBatch.Draw(texture, position, Color.White);
                     }
+
                 }
             }
         }
