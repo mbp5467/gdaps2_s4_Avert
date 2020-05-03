@@ -644,6 +644,9 @@ namespace Avert
             ProcessInput();
             if (currentState == GameStates.Stage)
             {
+                int x = (screenSize_W - setup.windowWidth) / 2;
+                int y = (screenSize_H - setup.windowWidth) / 2;
+
                 //Timer system
                 if (isLaserShoot == false)
                 {
@@ -656,8 +659,6 @@ namespace Avert
                 //Loads in everything for each level
                 if (loadLevel == false)
                 {
-                    int x = (screenSize_W - setup.windowWidth) / 2;
-                    int y = (screenSize_H - setup.windowWidth) / 2;
 
                     rotateCWRectangle = new Rectangle(x + 300, y + 500, rotateCW.Width, rotateCW.Height);
                     rotateCCWRectangle = new Rectangle(x + 200, y + 500, rotateCCW.Width, rotateCCW.Height);
@@ -725,7 +726,7 @@ namespace Avert
                 //Hits the target, wins the level
                 if (isLaserShoot == true && laserBeam.Location.Intersects(targets.Position))
                 {
-                    laserAnimation = false;
+                    laserAnimation = false ;
                     targets.Texture = targetFilled;
                     hitTarget = true;
                     if (shootTimer <= 0)
@@ -734,9 +735,12 @@ namespace Avert
                         currentState = GameStates.Wins;
                     }
                 }
+                
+                
                 //Out of boundaries, fails the level
-                if (isLaserShoot == true && (laserBeam.Location.X < 0 || laserBeam.Location.Y < 0
-                    || laserBeam.Location.X > 500 || laserBeam.Location.Y > 500))
+                if (isLaserShoot == true && 
+                    (laserBeam.Location.X < x-50 || laserBeam.Location.Y < y - 50
+                    || laserBeam.Location.X > x+500 || laserBeam.Location.Y > y+500))
                 {
                     laserAnimation = false;
                     if (shootTimer <= 0)
@@ -745,6 +749,7 @@ namespace Avert
                         currentState = GameStates.Failure;
                     }
                 }
+
                 //Used for drag/drop
                 mirror.Update(gameTime);
             }
@@ -902,8 +907,7 @@ namespace Avert
                     spriteBatch.Draw(background, new Vector2(0f, 0f), Color.White);
                     setup.Draw(spriteBatch, gridTexture);
                     GraphicsDevice.Clear(Color.Aquamarine);
-                    spriteBatch.DrawString(mainFont, String.Format("{0:0.000}", timer) + "\n"
-                        + "Health: " + life.ToString(), new Vector2(10f, 510f), Color.Black);
+                   
                     //Draws the rotation buttons
                     if (IsHovering(Mouse.GetState(), rotateCCWRectangle))
                     {
@@ -933,7 +937,7 @@ namespace Avert
                     //Draws the laser when it's fired
                     if (isLaserShoot == true)
                     {
-                        spriteBatch.DrawString(mainFont, "Shoot the laser!", new Vector2(100, 620), Color.Red);
+                        spriteBatch.DrawString(mainFont, "Shoot the laser!", new Vector2(x+150, y-100), Color.Red);
                     }
                     if (laserAnimation == true)
                     {
